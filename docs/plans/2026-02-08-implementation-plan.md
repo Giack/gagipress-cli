@@ -41,37 +41,41 @@ gagipress version   # Shows version info ✅
 
 ---
 
-### 1.2 Supabase Project Setup 🔄 IN PROGRESS
+### 1.2 Supabase Project Setup ✅ COMPLETED
 
 **Steps**:
-- [ ] Create Supabase account/project (manual, via web)
+- [ ] Create Supabase account/project (manual, via web - user task)
 - [x] Implement `gagipress init` command ✅
   - Interactive wizard per credentials ✅
-  - Test connection (next)
+  - Test connection ✅
   - Save config to `~/.gagipress/config.yaml` ✅
-- [ ] Create SQL migration file con schema completo
-- [ ] Implement `gagipress db migrate` command
-  - Esegue migration via Supabase REST API
-  - Crea tabelle, indici, RLS policies
+- [x] Create SQL migration file con schema completo ✅
+- [x] Implement `gagipress db migrate` command ✅
+  - Esegue migration via HTTP API ✅
+  - Crea tabelle, indici, RLS policies ✅
 
 **Deliverables**:
 ```bash
 gagipress init              # Setup completo ✅
-gagipress db migrate        # Crea schema (next)
-gagipress db status         # Verifica connessione (next)
+gagipress db migrate        # Crea schema ✅
+gagipress db status         # Verifica connessione ✅
 ```
 
 **Files**:
 - `cmd/init.go` ✅
-- `cmd/db/migrate.go` (next)
-- `cmd/db/status.go` (next)
-- `migrations/001_initial_schema.sql` (next)
-- `internal/supabase/client.go` (next)
-- `internal/supabase/migrate.go` (next)
+- `cmd/db/migrate.go` ✅
+- `cmd/db/status.go` ✅
+- `cmd/db/db.go` ✅
+- `migrations/001_initial_schema.sql` ✅
+- `internal/supabase/client.go` ✅
+- `internal/supabase/migrate.go` ✅
+
+**Completed**: 2026-02-08
+**Commit**: 42bf9a8
 
 ---
 
-### 1.3 API Integrations Skeleton
+### 1.3 API Integrations Skeleton 🔄 IN PROGRESS
 
 **Steps**:
 - [ ] OpenAI client wrapper
@@ -92,19 +96,19 @@ gagipress db status         # Verifica connessione (next)
 
 **Deliverables**:
 ```bash
-gagipress auth openai       # Test OpenAI connection
+gagipress auth openai       # Test OpenAI connection (next)
 gagipress auth instagram    # OAuth flow (future)
 gagipress auth tiktok       # OAuth flow (future)
-gagipress test gemini "Ciao" # Test Gemini automation
+gagipress test gemini "Ciao" # Test Gemini automation (next)
 ```
 
 **Files**:
-- `internal/ai/openai.go`
-- `internal/ai/gemini.go`
-- `internal/social/instagram.go`
-- `internal/social/tiktok.go`
-- `cmd/auth/openai.go`
-- `cmd/test/gemini.go`
+- `internal/ai/openai.go` (next)
+- `internal/ai/gemini.go` (next)
+- `internal/social/instagram.go` (next)
+- `internal/social/tiktok.go` (next)
+- `cmd/auth/openai.go` (next)
+- `cmd/test/gemini.go` (next)
 
 ---
 
@@ -769,10 +773,12 @@ gagipress stats correlate --book <id>
 
 **Week**: 1
 **Day**: 1
-**Current Task**: 1.2 Supabase Project Setup
-**Completed**: 1.1 Go Project Setup ✅
+**Current Task**: 1.3 API Integrations Skeleton
+**Completed**:
+  - 1.1 Go Project Setup ✅
+  - 1.2 Supabase Project Setup ✅
 **Blockers**: None
-**Next**: Create Supabase client, implement db commands
+**Next**: Implement OpenAI client wrapper, test Gemini automation
 
 ---
 
