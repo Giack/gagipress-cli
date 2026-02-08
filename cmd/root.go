@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gagipress/gagipress-cli/cmd/db"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -39,6 +40,9 @@ func init() {
 	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gagipress/config.yaml)")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
+
+	// Add subcommands
+	rootCmd.AddCommand(db.DbCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
