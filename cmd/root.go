@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gagipress/gagipress-cli/cmd/auth"
 	"github.com/gagipress/gagipress-cli/cmd/db"
+	"github.com/gagipress/gagipress-cli/cmd/test"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,6 +45,8 @@ func init() {
 
 	// Add subcommands
 	rootCmd.AddCommand(db.DbCmd)
+	rootCmd.AddCommand(auth.AuthCmd)
+	rootCmd.AddCommand(test.TestCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
