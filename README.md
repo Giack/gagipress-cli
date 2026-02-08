@@ -122,6 +122,33 @@ gagipress books list
 gagipress books sales import <csv-file>
 ```
 
+### Database Management
+
+```bash
+# Check database connection and schema version
+gagipress db status
+
+# Apply pending migrations
+gagipress db migrate
+```
+
+### API Testing
+
+```bash
+# Test OpenAI API connection
+gagipress auth openai
+
+# Test Instagram API (requires OAuth setup)
+gagipress auth instagram
+
+# Test TikTok API (requires OAuth setup)
+gagipress auth tiktok
+
+# Test Gemini browser automation
+gagipress test gemini "Write a short story"
+gagipress test gemini --headless=false "Ciao!"
+```
+
 ## Architecture
 
 **Tech Stack:**
