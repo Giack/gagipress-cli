@@ -15,37 +15,40 @@ Piano dettagliato step-by-step per implementare MVP del sistema Gagipress Social
 
 ## Week 1: Foundation (Current)
 
-### 1.1 Go Project Setup ✓
+### 1.1 Go Project Setup ✅ COMPLETED
 
 **Steps**:
 - [x] Create worktree isolato
-- [ ] Initialize Go module
-- [ ] Setup Cobra CLI framework
-- [ ] Create basic command structure
-- [ ] Add configuration management (Viper)
+- [x] Initialize Go module
+- [x] Setup Cobra CLI framework
+- [x] Create basic command structure
+- [x] Add configuration management (Viper)
 
 **Deliverables**:
 ```bash
-gagipress --help    # Shows command tree
-gagipress version   # Shows version info
+gagipress --help    # Shows command tree ✅
+gagipress version   # Shows version info ✅
 ```
 
 **Files**:
-- `go.mod`, `go.sum`
-- `cmd/root.go`
-- `cmd/version.go`
-- `internal/config/config.go`
+- `go.mod`, `go.sum` ✅
+- `cmd/root.go` ✅
+- `cmd/version.go` ✅
+- `internal/config/config.go` ✅
+
+**Completed**: 2026-02-08
+**Commit**: e428bac
 
 ---
 
-### 1.2 Supabase Project Setup
+### 1.2 Supabase Project Setup 🔄 IN PROGRESS
 
 **Steps**:
 - [ ] Create Supabase account/project (manual, via web)
-- [ ] Implement `gagipress init` command
-  - Interactive wizard per credentials
-  - Test connection
-  - Save config to `~/.gagipress/config.yaml`
+- [x] Implement `gagipress init` command ✅
+  - Interactive wizard per credentials ✅
+  - Test connection (next)
+  - Save config to `~/.gagipress/config.yaml` ✅
 - [ ] Create SQL migration file con schema completo
 - [ ] Implement `gagipress db migrate` command
   - Esegue migration via Supabase REST API
@@ -53,18 +56,18 @@ gagipress version   # Shows version info
 
 **Deliverables**:
 ```bash
-gagipress init              # Setup completo
-gagipress db migrate        # Crea schema
-gagipress db status         # Verifica connessione
+gagipress init              # Setup completo ✅
+gagipress db migrate        # Crea schema (next)
+gagipress db status         # Verifica connessione (next)
 ```
 
 **Files**:
-- `cmd/init.go`
-- `cmd/db/migrate.go`
-- `cmd/db/status.go`
-- `migrations/001_initial_schema.sql`
-- `internal/supabase/client.go`
-- `internal/supabase/migrate.go`
+- `cmd/init.go` ✅
+- `cmd/db/migrate.go` (next)
+- `cmd/db/status.go` (next)
+- `migrations/001_initial_schema.sql` (next)
+- `internal/supabase/client.go` (next)
+- `internal/supabase/migrate.go` (next)
 
 ---
 
@@ -766,9 +769,10 @@ gagipress stats correlate --book <id>
 
 **Week**: 1
 **Day**: 1
-**Current Task**: 1.1 Go Project Setup
+**Current Task**: 1.2 Supabase Project Setup
+**Completed**: 1.1 Go Project Setup ✅
 **Blockers**: None
-**Next**: Initialize Go module, setup Cobra CLI
+**Next**: Create Supabase client, implement db commands
 
 ---
 
