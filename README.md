@@ -1,0 +1,238 @@
+# Gagipress CLI
+
+🚀 Powerful social media automation tool for Amazon KDP publishers
+
+## Overview
+
+Gagipress CLI automates content generation, scheduling, and analytics for TikTok and Instagram Reels, specifically designed for self-publishers on Amazon KDP.
+
+### Features
+
+- ✅ **AI-Powered Content Generation**: Generate 7-10+ social media scripts per week using OpenAI and Gemini
+- ✅ **Intelligent Scheduling**: Smart weekly planning with peak time optimization
+- ✅ **Automated Publishing**: Cron-based publishing to Instagram and TikTok
+- ✅ **Performance Analytics**: Track engagement and correlate with KDP sales
+- ✅ **Self-Hosted**: Full control with minimal recurring costs
+
+## Quick Start
+
+### Prerequisites
+
+- Go 1.24+ ([Download](https://go.dev/dl/))
+- Supabase account ([Sign up](https://supabase.com))
+- OpenAI API key ([Get one](https://platform.openai.com))
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/gagipress/gagipress-cli
+cd gagipress-cli
+
+# Build
+go build -o gagipress
+
+# Install globally (optional)
+sudo mv gagipress /usr/local/bin/
+```
+
+### Setup
+
+```bash
+# Initialize configuration
+gagipress init
+
+# Create database schema
+gagipress db migrate
+
+# Add your first book
+gagipress books add
+
+# Generate content ideas
+gagipress generate ideas
+```
+
+## Configuration
+
+Configuration is stored in `~/.gagipress/config.yaml`
+
+Required:
+- Supabase URL and keys
+- OpenAI API key
+
+Optional:
+- Instagram access token
+- TikTok access token
+- Amazon KDP credentials
+
+## Commands
+
+### Content Generation
+
+```bash
+# Generate 20-30 content ideas
+gagipress generate ideas
+
+# Generate script from idea
+gagipress generate script <idea-id>
+
+# Generate full week of scripts
+gagipress generate batch --count 10
+```
+
+### Scheduling
+
+```bash
+# Create intelligent weekly plan
+gagipress calendar plan
+
+# Approve/modify scheduled content
+gagipress calendar approve
+
+# View calendar
+gagipress calendar show
+
+# Force publish immediately
+gagipress calendar publish <id>
+```
+
+### Analytics
+
+```bash
+# Sync metrics from social platforms
+gagipress stats sync
+
+# View dashboard
+gagipress stats show
+
+# Analyze social → sales correlation
+gagipress stats correlate
+```
+
+### Book Management
+
+```bash
+# Add book to catalog
+gagipress books add
+
+# List all books
+gagipress books list
+
+# Import sales data
+gagipress books sales import <csv-file>
+```
+
+## Architecture
+
+**Tech Stack:**
+- **CLI**: Go with Cobra framework
+- **Database**: Supabase (PostgreSQL)
+- **AI**: OpenAI API + Gemini (browser automation)
+- **Social APIs**: Instagram Graph API, TikTok Creator API
+- **Automation**: Supabase Edge Functions (cron jobs)
+
+**Deployment:**
+- CLI runs locally or on VPS
+- Database and cron jobs on Supabase (serverless)
+- Zero downtime with automatic scaling
+
+## Development
+
+### Project Structure
+
+```
+gagipress-cli/
+├── cmd/                    # CLI commands
+│   ├── root.go
+│   ├── init.go
+│   ├── generate/
+│   ├── calendar/
+│   └── stats/
+├── internal/               # Internal packages
+│   ├── config/            # Configuration management
+│   ├── supabase/          # Supabase client
+│   ├── ai/                # OpenAI & Gemini
+│   ├── social/            # Instagram & TikTok APIs
+│   ├── models/            # Data models
+│   ├── repository/        # Database operations
+│   ├── generator/         # Content generation logic
+│   ├── scheduler/         # Scheduling algorithms
+│   └── analytics/         # Analytics & correlation
+├── supabase/
+│   └── functions/         # Edge Functions
+├── migrations/            # Database migrations
+├── templates/             # Prompt templates
+└── docs/                  # Documentation
+```
+
+### Running Tests
+
+```bash
+# Unit tests
+go test ./...
+
+# Integration tests
+go test ./test/integration/...
+
+# E2E tests
+go test ./test/e2e/...
+```
+
+### Building
+
+```bash
+# Build for current platform
+go build -o gagipress
+
+# Cross-compile for all platforms
+make build-all
+
+# Build and install
+make install
+```
+
+## Documentation
+
+- [Design Document](docs/plans/2026-02-08-gagipress-social-automation-design.md)
+- [Implementation Plan](docs/plans/2026-02-08-implementation-plan.md)
+- [User Guide](docs/USER_GUIDE.md) _(coming soon)_
+- [API Setup Guide](docs/API_SETUP.md) _(coming soon)_
+
+## Roadmap
+
+### Phase 1: MVP (Current)
+- [x] CLI foundation
+- [ ] Content generation
+- [ ] Scheduling & publishing
+- [ ] Analytics & correlation
+
+### Phase 2: Video Automation
+- [ ] Template-based video generation
+- [ ] FFmpeg compositing
+- [ ] Text-to-speech voiceover
+- [ ] Auto-subtitles
+
+### Phase 3: Interaction Automation
+- [ ] Auto-reply to comments
+- [ ] DM automation
+- [ ] Community management
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details
+
+## Support
+
+- 📧 Email: support@gagipress.com
+- 🐛 Issues: [GitHub Issues](https://github.com/gagipress/gagipress-cli/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/gagipress/gagipress-cli/discussions)
+
+---
+
+Built with ❤️ for independent publishers
+
+**Current Version**: v0.1.0 (MVP Development)
