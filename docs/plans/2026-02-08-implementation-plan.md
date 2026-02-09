@@ -280,7 +280,7 @@ gagipress scripts show <id>    # Mostra script completo
 
 ## Week 3: Scheduling & Publishing
 
-### 3.1 Calendar Planning Algorithm
+### 3.1 Calendar Planning Algorithm ✅ COMPLETED
 
 **Steps**:
 - [ ] Implement `gagipress calendar plan` command
@@ -307,10 +307,10 @@ gagipress calendar show         # Visualizza piano corrente
 
 ---
 
-### 3.2 Interactive Approval UI
+### 3.2 Interactive Approval UI ✅ COMPLETED (Simplified)
 
 **Steps**:
-- [ ] Implement `gagipress calendar approve` command
+- [x] Implement `gagipress calendar approve` command ✅
   - TUI (Text User Interface) con bubbletea/lipgloss
   - Lista contenuti schedulati
   - Azioni per ogni item: Approve, Edit, Reject, Reschedule
