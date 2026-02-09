@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gagipress/gagipress-cli/cmd/auth"
+	"github.com/gagipress/gagipress-cli/cmd/books"
 	"github.com/gagipress/gagipress-cli/cmd/db"
 	"github.com/gagipress/gagipress-cli/cmd/test"
 	"github.com/spf13/cobra"
@@ -47,6 +48,7 @@ func init() {
 	rootCmd.AddCommand(db.DbCmd)
 	rootCmd.AddCommand(auth.AuthCmd)
 	rootCmd.AddCommand(test.TestCmd)
+	rootCmd.AddCommand(books.BooksCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
