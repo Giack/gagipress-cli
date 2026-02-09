@@ -6,6 +6,7 @@ import (
 
 	"github.com/gagipress/gagipress-cli/cmd/auth"
 	"github.com/gagipress/gagipress-cli/cmd/books"
+	"github.com/gagipress/gagipress-cli/cmd/calendar"
 	"github.com/gagipress/gagipress-cli/cmd/db"
 	"github.com/gagipress/gagipress-cli/cmd/generate"
 	"github.com/gagipress/gagipress-cli/cmd/ideas"
@@ -53,6 +54,7 @@ func init() {
 	rootCmd.AddCommand(books.BooksCmd)
 	rootCmd.AddCommand(generate.GenerateCmd)
 	rootCmd.AddCommand(ideas.IdeasCmd)
+	rootCmd.AddCommand(calendar.CalendarCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
