@@ -70,14 +70,25 @@ Optional:
 ### Content Generation
 
 ```bash
-# Generate 20-30 content ideas
+# Generate content ideas (20 by default)
 gagipress generate ideas
+gagipress generate ideas --count 30
+gagipress generate ideas --book <book-id>
+gagipress generate ideas --gemini  # Force Gemini usage
 
-# Generate script from idea
+# List generated ideas
+gagipress ideas list
+gagipress ideas list --status pending
+gagipress ideas list --status approved --limit 10
+
+# Approve/reject ideas
+gagipress ideas approve <idea-id>
+gagipress ideas reject <idea-id>
+
+# Generate script from approved idea
 gagipress generate script <idea-id>
-
-# Generate full week of scripts
-gagipress generate batch --count 10
+gagipress generate script <idea-id> --platform instagram
+gagipress generate script <idea-id> --gemini
 ```
 
 ### Scheduling
