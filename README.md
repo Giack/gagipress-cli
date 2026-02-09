@@ -110,14 +110,15 @@ gagipress calendar publish <id>
 ### Analytics
 
 ```bash
-# Sync metrics from social platforms
-gagipress stats sync
-
-# View dashboard
+# View performance dashboard
 gagipress stats show
+gagipress stats show --period 7d
+gagipress stats show --period 30d
+gagipress stats show --platform instagram
 
 # Analyze social → sales correlation
-gagipress stats correlate
+gagipress stats correlate --book <book-id>
+gagipress stats correlate --book <book-id> --days 60
 ```
 
 ### Book Management
@@ -129,8 +130,13 @@ gagipress books add
 # List all books
 gagipress books list
 
-# Import sales data
+# Edit/delete books
+gagipress books edit <book-id>
+gagipress books delete <book-id>
+
+# Import sales data from Amazon KDP
 gagipress books sales import <csv-file>
+gagipress books sales show <book-id>
 ```
 
 ### Database Management
@@ -238,11 +244,14 @@ make install
 
 ## Roadmap
 
-### Phase 1: MVP (Current)
+### Phase 1: MVP (Current - Week 4 Complete!)
 - [x] CLI foundation
-- [ ] Content generation
-- [ ] Scheduling & publishing
-- [ ] Analytics & correlation
+- [x] Content generation
+- [x] Scheduling & approval workflow
+- [x] Analytics & correlation
+- [x] Amazon KDP sales import
+- [ ] Automated publishing (OAuth setup required)
+- [ ] Automated metrics collection
 
 ### Phase 2: Video Automation
 - [ ] Template-based video generation

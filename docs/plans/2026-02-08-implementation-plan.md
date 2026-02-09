@@ -283,27 +283,29 @@ gagipress scripts show <id>    # Mostra script completo
 ### 3.1 Calendar Planning Algorithm ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress calendar plan` command
-  - Legge script approvati dal database
-  - Algoritmo per best posting times:
-    - Analizza metriche storiche (se disponibili)
-    - Default a peak times standard
-  - Content mix balancing
-  - Book rotation
-  - Genera piano con `scheduled_for` timestamps
-  - Salva in `content_calendar` con status `pending_approval`
+- [x] Implement `gagipress calendar plan` command ✅
+  - Legge script approvati dal database ✅
+  - Algoritmo per best posting times: ✅
+    - Analizza metriche storiche (se disponibili) ✅
+    - Default a peak times standard ✅
+  - Content mix balancing ✅
+  - Book rotation ✅
+  - Genera piano con `scheduled_for` timestamps ✅
+  - Salva in `content_calendar` con status `pending_approval` ✅
 
 **Deliverables**:
 ```bash
-gagipress calendar plan --days 7
-gagipress calendar show         # Visualizza piano corrente
+gagipress calendar plan --days 7    ✅
+gagipress calendar show             ✅
 ```
 
 **Files**:
-- `cmd/calendar/plan.go`
-- `cmd/calendar/show.go`
-- `internal/scheduler/planner.go`
-- `internal/scheduler/optimizer.go`
+- `cmd/calendar/plan.go` ✅
+- `cmd/calendar/show.go` ✅
+- `internal/scheduler/planner.go` ✅
+- `internal/scheduler/optimizer.go` ✅
+
+**Completed**: 2026-02-09
 
 ---
 
@@ -311,22 +313,22 @@ gagipress calendar show         # Visualizza piano corrente
 
 **Steps**:
 - [x] Implement `gagipress calendar approve` command ✅
-  - TUI (Text User Interface) con bubbletea/lipgloss
-  - Lista contenuti schedulati
-  - Azioni per ogni item: Approve, Edit, Reject, Reschedule
-  - Navigazione con arrow keys
-  - Batch operations
-  - Update database status
+  - Interactive CLI workflow (simplified, no TUI) ✅
+  - Lista contenuti schedulati ✅
+  - Azioni per ogni item: Approve, Skip, Reject ✅
+  - Batch processing ✅
+  - Update database status ✅
 
 **Deliverables**:
 ```bash
-gagipress calendar approve   # Interactive TUI
+gagipress calendar approve   ✅
 ```
 
 **Files**:
-- `cmd/calendar/approve.go`
-- `internal/tui/approval.go`
-- `internal/tui/models.go`
+- `cmd/calendar/approve.go` ✅
+
+**Completed**: 2026-02-09
+**Note**: Simplified implementation without TUI library for faster MVP delivery
 
 ---
 
@@ -438,76 +440,81 @@ gagipress stats sync
 
 ---
 
-### 4.2 Analytics Dashboard (CLI)
+### 4.2 Analytics Dashboard (CLI) ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress stats show` command
-  - Query metriche aggregate
-  - Visualizzazione tabellare:
-    - Total views, likes, engagement rate
-    - Top performing posts
-    - Growth trend (follower)
-    - Content type breakdown
-  - Charts in terminal (usando termui o simile)
+- [x] Implement `gagipress stats show` command ✅
+  - Query metriche aggregate ✅
+  - Visualizzazione tabellare: ✅
+    - Total views, likes, engagement rate ✅
+    - Top performing posts ✅
+    - Platform breakdown ✅
+  - Insights and recommendations ✅
 
 **Deliverables**:
 ```bash
-gagipress stats show
-gagipress stats show --period 7d
-gagipress stats show --period 30d
+gagipress stats show                ✅
+gagipress stats show --period 7d    ✅
+gagipress stats show --period 30d   ✅
+gagipress stats show --platform instagram  ✅
 ```
 
 **Files**:
-- `cmd/stats/show.go`
-- `internal/analytics/dashboard.go`
-- `internal/analytics/charts.go`
+- `cmd/stats/stats.go` ✅
+- `cmd/stats/show.go` ✅
+- `internal/models/metrics.go` ✅
+- `internal/repository/metrics.go` ✅
+
+**Completed**: 2026-02-09
 
 ---
 
-### 4.3 Sales Data Import
+### 4.3 Sales Data Import ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress books sales` command
-  - Supporta import da CSV (Amazon KDP report)
-  - Parsing formato Amazon
-  - Map ASIN → book_id
-  - Insert/update `sales_data` table
-  - Deduplication
+- [x] Implement `gagipress books sales` command ✅
+  - Supporta import da CSV (Amazon KDP report) ✅
+  - Parsing formato Amazon ✅
+  - Map ASIN → book_id ✅
+  - Insert/update `sales_data` table ✅
+  - Deduplication ✅
 
 **Deliverables**:
 ```bash
-gagipress books sales import <csv-file>
-gagipress books sales show <book-id>
+gagipress books sales import <csv-file>  ✅
+gagipress books sales show <book-id>     ✅
 ```
 
 **Files**:
-- `cmd/books/sales.go`
-- `internal/kdp/parser.go`
-- `internal/repository/sales.go`
+- `cmd/books/sales.go` ✅
+- `internal/parser/kdp.go` ✅
+- `internal/repository/sales.go` ✅
+
+**Completed**: 2026-02-09
 
 ---
 
-### 4.4 Correlation Analysis
+### 4.4 Correlation Analysis ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress stats correlate` command
-  - Query temporal correlation:
-    - Vendite spike 3-7 giorni post pubblicazione
-  - Content performance score per categoria
-  - Top ROI content types
-  - Recommendations per ottimizzazione
-  - Report visualizzazione CLI
+- [x] Implement `gagipress stats correlate` command ✅
+  - Calculate Pearson correlation coefficient ✅
+  - Daily aggregation of social metrics and sales ✅
+  - Correlation strength interpretation ✅
+  - Recommendations based on results ✅
+  - Report visualizzazione CLI ✅
 
 **Deliverables**:
 ```bash
-gagipress stats correlate
-gagipress stats correlate --book <id>
+gagipress stats correlate --book <id>  ✅
+gagipress stats correlate --book <id> --days 60  ✅
 ```
 
 **Files**:
-- `cmd/stats/correlate.go`
-- `internal/analytics/correlation.go`
-- `internal/analytics/scoring.go`
+- `cmd/stats/correlate.go` ✅
+- `internal/models/metrics.go` (CorrelationPoint) ✅
+
+**Completed**: 2026-02-09
 
 ---
 
@@ -800,14 +807,23 @@ gagipress stats correlate --book <id>
 
 ## Current Status
 
-**Week**: 1
-**Day**: 1
-**Current Task**: 1.3 API Integrations Skeleton
+**Week**: 4
+**Day**: 9 (2026-02-09)
+**Current Task**: Week 4 - Analytics & Correlation (COMPLETED)
 **Completed**:
-  - 1.1 Go Project Setup ✅
-  - 1.2 Supabase Project Setup ✅
+  - Week 1: Foundation ✅
+  - Week 2: Content Generation ✅
+  - Week 3: Scheduling & Publishing (partial - OAuth deferred) ✅
+  - Week 4: Analytics & Correlation ✅
+    - 4.2 Analytics Dashboard ✅
+    - 4.3 Sales Data Import ✅
+    - 4.4 Correlation Analysis ✅
 **Blockers**: None
-**Next**: Implement OpenAI client wrapper, test Gemini automation
+**Next**: Create comprehensive test plan (Task #7)
+**Notes**:
+  - OAuth publishing (Section 3.3) deferred as future enhancement
+  - Metrics collection automation (4.1) can be added later
+  - Weekly report automation (4.5) can be added later
 
 ---
 
