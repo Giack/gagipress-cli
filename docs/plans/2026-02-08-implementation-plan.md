@@ -135,104 +135,124 @@ gagipress test gemini "Ciao" # Test Gemini automation ✅
 
 ## Week 2: Content Generation
 
-### 2.1 Database Models
+### 2.1 Database Models ✅ COMPLETED
 
 **Steps**:
-- [ ] Create Go structs per tabelle:
-  - `Book`
-  - `ContentIdea`
-  - `ContentScript`
-  - `ContentCalendar`
-- [ ] CRUD operations con Supabase client
-- [ ] Repository pattern per clean architecture
+- [x] Create Go structs per tabelle:
+  - `Book` ✅
+  - `ContentIdea` ✅
+  - `ContentScript` ✅
+  - `ContentCalendar` ✅
+- [x] CRUD operations con Supabase client ✅
+- [x] Repository pattern per clean architecture ✅
 
 **Files**:
-- `internal/models/book.go`
-- `internal/models/content.go`
-- `internal/repository/books.go`
-- `internal/repository/content.go`
+- `internal/models/book.go` ✅
+- `internal/models/content.go` ✅
+- `internal/repository/books.go` ✅
+- `internal/repository/content.go` ✅
+
+**Completed**: 2026-02-09
+**Commit**: 0b2bd57
 
 ---
 
-### 2.2 Book Management
+### 2.2 Book Management ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress books add` command
-  - Interactive input: titolo, genere, audience, ASIN
-  - Upload cover image (optional)
-  - Save to Supabase
-- [ ] Implement `gagipress books list` command
-  - Tabella con tutti libri
-- [ ] Implement `gagipress books edit <id>` command
-- [ ] Implement `gagipress books delete <id>` command
+- [x] Implement `gagipress books add` command ✅
+  - Interactive input: titolo, genere, audience, ASIN ✅
+  - Upload cover image (optional) ✅
+  - Save to Supabase ✅
+- [x] Implement `gagipress books list` command ✅
+  - Tabella con tutti libri ✅
+- [x] Implement `gagipress books edit <id>` command ✅
+- [x] Implement `gagipress books delete <id>` command ✅
 
 **Deliverables**:
 ```bash
-gagipress books add
-gagipress books list
-gagipress books edit <id>
+gagipress books add         ✅
+gagipress books list        ✅
+gagipress books edit <id>   ✅
+gagipress books delete <id> ✅
 ```
 
 **Files**:
-- `cmd/books/add.go`
-- `cmd/books/list.go`
-- `cmd/books/edit.go`
-- `internal/books/service.go`
+- `cmd/books/books.go` ✅
+- `cmd/books/add.go` ✅
+- `cmd/books/list.go` ✅
+- `cmd/books/edit.go` ✅
+- `cmd/books/delete.go` ✅
+
+**Completed**: 2026-02-09
+**Commit**: 0a32a92
 
 ---
 
-### 2.3 Idea Generation
+### 2.3 Idea Generation ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress generate ideas` command
-  - Legge libri dal database
-  - Costruisce prompt per AI (OpenAI primary)
-  - Fallback a Gemini se OpenAI fail
-  - Genera 20-30 idee
-  - Categorizza (educational, entertainment, etc.)
-  - Salva in `content_ideas` table
-- [ ] Create prompt templates per niche:
-  - Libri bambini
-  - Enigmistica dialetto
-  - Libri risparmio
-- [ ] Relevance scoring algorithm
+- [x] Implement `gagipress generate ideas` command ✅
+  - Legge libri dal database ✅
+  - Costruisce prompt per AI (OpenAI primary) ✅
+  - Fallback a Gemini se OpenAI fail ✅
+  - Genera 20-30 idee ✅
+  - Categorizza (educational, entertainment, etc.) ✅
+  - Salva in `content_ideas` table ✅
+- [x] Create prompt templates per niche: ✅
+  - Libri bambini ✅
+  - Enigmistica dialetto ✅
+  - Libri risparmio ✅
+- [x] Relevance scoring algorithm ✅
 
 **Deliverables**:
 ```bash
-gagipress generate ideas --count 30
-gagipress ideas list        # Mostra idee generate
-gagipress ideas approve <id> # Approva idea per scripting
-gagipress ideas reject <id>  # Rigetta idea
+gagipress generate ideas --count 30  ✅
+gagipress ideas list                 ✅
+gagipress ideas approve <id>         ✅
+gagipress ideas reject <id>          ✅
 ```
 
 **Files**:
-- `cmd/generate/ideas.go`
-- `cmd/ideas/list.go`
-- `cmd/ideas/approve.go`
-- `internal/generator/ideas.go`
-- `internal/generator/prompts.go`
-- `templates/prompts/ideas_*.txt`
+- `cmd/generate/generate.go` ✅
+- `cmd/generate/ideas.go` ✅
+- `cmd/ideas/ideas.go` ✅
+- `cmd/ideas/list.go` ✅
+- `cmd/ideas/approve.go` ✅
+- `cmd/ideas/reject.go` ✅
+- `internal/generator/ideas.go` ✅
+- `internal/prompts/templates.go` ✅
+
+**Completed**: 2026-02-09
+**Commit**: fbdbd8f
 
 ---
 
-### 2.4 Script Generation
+### 2.4 Script Generation ✅ COMPLETED
 
 **Steps**:
-- [ ] Implement `gagipress generate script <idea-id>` command
-  - Legge idea dal database
-  - Costruisce prompt dettagliato
-  - Genera: hook, full script, CTA, hashtags, visual notes
-  - Salva in `content_scripts` table
-- [ ] Implement `gagipress generate batch` command
+- [x] Implement `gagipress generate script <idea-id>` command ✅
+  - Legge idea dal database ✅
+  - Costruisce prompt dettagliato ✅
+  - Genera: hook, full script, CTA, hashtags, visual notes ✅
+  - Salva in `content_scripts` table ✅
+- [ ] Implement `gagipress generate batch` command ⏭️ (future enhancement)
   - Approva automaticamente top N idee
   - Genera script per tutte
-- [ ] Create script templates per content type
+- [x] Create script templates per content type ✅
 
 **Deliverables**:
 ```bash
-gagipress generate script <idea-id>
-gagipress generate batch --count 10
-gagipress scripts list
+gagipress generate script <idea-id> --platform tiktok/instagram  ✅
+```
+
+**Files**:
+- `cmd/generate/script.go` ✅
+- `internal/generator/scripts.go` ✅
+- `internal/prompts/templates.go` (updated) ✅
+
+**Completed**: 2026-02-09
+**Commit**: d86943f
 gagipress scripts show <id>    # Mostra script completo
 ```
 
