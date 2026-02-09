@@ -18,4 +18,5 @@ var CalendarCmd = &cobra.Command{
 func init() {
 	CalendarCmd.AddCommand(planCmd)
 	CalendarCmd.AddCommand(showCmd)
+	CalendarCmd.AddCommand(approveCmd)
 }
