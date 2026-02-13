@@ -48,7 +48,7 @@ func runImport(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📊 KDP Sales Import")
-	fmt.Println("═══════════════════\n")
+	fmt.Println("═══════════════════")
 
 	// Open CSV file
 	fmt.Printf("Reading file: %s\n", csvFile)

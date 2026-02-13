@@ -42,7 +42,7 @@ func runShow(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📊 Performance Analytics")
-	fmt.Println("════════════════════════\n")
+	fmt.Println("════════════════════════")
 
 	// Parse period
 	var from time.Time
@@ -63,7 +63,7 @@ func runShow(cmd *cobra.Command, args []string) error {
 	if platform != "" {
 		fmt.Printf(" | Platform: %s", platform)
 	}
-	fmt.Println("\n")
+	fmt.Println()
 
 	// Get metrics
 	metricsRepo := repository.NewMetricsRepository(&cfg.Supabase)

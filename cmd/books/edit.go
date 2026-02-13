@@ -34,7 +34,7 @@ func runEdit(cmd *cobra.Command, args []string) error {
 
 	// Get existing book
 	fmt.Println("📚 Edit Book")
-	fmt.Println("════════════\n")
+	fmt.Println("════════════")
 	fmt.Print("Loading book... ")
 
 	book, err := repo.GetByID(bookID)
@@ -42,10 +42,10 @@ func runEdit(cmd *cobra.Command, args []string) error {
 		fmt.Println("❌ FAILED")
 		return fmt.Errorf("failed to get book: %w", err)
 	}
-	fmt.Println("✅ OK\n")
+	fmt.Println("✅ OK")
 
 	fmt.Printf("Current book: %s\n", book.Title)
-	fmt.Println("Press Enter to keep current value, or enter new value:\n")
+	fmt.Println("Press Enter to keep current value, or enter new value:")
 
 	reader := bufio.NewReader(os.Stdin)
 	input := &models.BookInput{

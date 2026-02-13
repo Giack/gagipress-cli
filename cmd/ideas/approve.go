@@ -26,7 +26,7 @@ func runApprove(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("✅ Approving Idea")
-	fmt.Println("═════════════════\n")
+	fmt.Println("═════════════════")
 
 	// Update status
 	repo := repository.NewContentRepository(&cfg.Supabase)

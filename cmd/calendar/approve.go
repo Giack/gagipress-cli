@@ -35,7 +35,7 @@ func runApprove(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("✅ Calendar Approval")
-	fmt.Println("════════════════════\n")
+	fmt.Println("════════════════════")
 
 	// Get pending entries
 	calendarRepo := repository.NewCalendarRepository(&cfg.Supabase)
@@ -78,7 +78,7 @@ func runApprove(cmd *cobra.Command, args []string) error {
 				fmt.Printf("❌ Failed to approve: %v\n\n", err)
 				continue
 			}
-			fmt.Println("✅ Approved\n")
+			fmt.Println("✅ Approved")
 			approved++
 
 		case "R":
@@ -86,15 +86,15 @@ func runApprove(cmd *cobra.Command, args []string) error {
 				fmt.Printf("❌ Failed to reject: %v\n\n", err)
 				continue
 			}
-			fmt.Println("❌ Rejected\n")
+			fmt.Println("❌ Rejected")
 			rejected++
 
 		case "S":
-			fmt.Println("⏭️  Skipped\n")
+			fmt.Println("⏭️  Skipped")
 			skipped++
 
 		default:
-			fmt.Println("⏭️  Invalid input, skipped\n")
+			fmt.Println("⏭️  Invalid input, skipped")
 			skipped++
 		}
 	}

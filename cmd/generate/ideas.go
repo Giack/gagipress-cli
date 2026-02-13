@@ -46,7 +46,7 @@ func runGenerateIdeas(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("💡 Content Idea Generator")
-	fmt.Println("══════════════════════════\n")
+	fmt.Println("══════════════════════════")
 
 	// Get books
 	booksRepo := repository.NewBooksRepository(&cfg.Supabase)

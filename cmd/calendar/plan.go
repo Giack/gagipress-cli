@@ -44,7 +44,7 @@ func runPlan(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📅 Content Calendar Planner")
-	fmt.Println("═══════════════════════════\n")
+	fmt.Println("═══════════════════════════")
 
 	fmt.Printf("Planning: %d days, %d posts/day = %d total posts\n\n", days, postsPerDay, days*postsPerDay)
 

@@ -37,7 +37,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📚 Delete Book")
-	fmt.Println("══════════════\n")
+	fmt.Println("══════════════")
 	fmt.Printf("Book: %s\n", book.Title)
 	fmt.Printf("Genre: %s\n", book.Genre)
 	fmt.Println("\n⚠️  WARNING: This will delete the book and all associated content!")

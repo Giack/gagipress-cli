@@ -51,7 +51,7 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📝 Script Generator")
-	fmt.Println("═══════════════════\n")
+	fmt.Println("═══════════════════")
 
 	// Get idea from database
 	contentRepo := repository.NewContentRepository(&cfg.Supabase)

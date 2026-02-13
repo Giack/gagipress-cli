@@ -34,7 +34,7 @@ func runShow(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📅 Content Calendar")
-	fmt.Println("═══════════════════\n")
+	fmt.Println("═══════════════════")
 
 	// Get calendar entries
 	// Note: We'd need to add a GetCalendar method to the repository
@@ -44,7 +44,7 @@ func runShow(cmd *cobra.Command, args []string) error {
 	if statusFilter != "" {
 		fmt.Printf(" (status: %s)", statusFilter)
 	}
-	fmt.Println("\n")
+	fmt.Println()
 
 	// Placeholder data structure
 	type CalendarEntry struct {

@@ -24,7 +24,7 @@ func runList(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📚 Book Catalog")
-	fmt.Println("═══════════════\n")
+	fmt.Println("═══════════════")
 
 	// Get all books
 	repo := repository.NewBooksRepository(&cfg.Supabase)

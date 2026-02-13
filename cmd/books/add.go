@@ -28,7 +28,7 @@ func runAdd(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("📚 Add New Book")
-	fmt.Println("═══════════════\n")
+	fmt.Println("═══════════════")
 
 	reader := bufio.NewReader(os.Stdin)
 	input := &models.BookInput{}

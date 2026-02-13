@@ -34,7 +34,7 @@ func runList(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("💡 Content Ideas")
-	fmt.Println("═════════════════\n")
+	fmt.Println("═════════════════")
 
 	// Get ideas
 	repo := repository.NewContentRepository(&cfg.Supabase)

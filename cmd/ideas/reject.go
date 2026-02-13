@@ -26,7 +26,7 @@ func runReject(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("❌ Rejecting Idea")
-	fmt.Println("═════════════════\n")
+	fmt.Println("═════════════════")
 
 	// Update status
 	repo := repository.NewContentRepository(&cfg.Supabase)

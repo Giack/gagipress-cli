@@ -46,7 +46,7 @@ func runCorrelate(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println("🔗 Social → Sales Correlation Analysis")
-	fmt.Println("═══════════════════════════════════════\n")
+	fmt.Println("═══════════════════════════════════════")
 
 	// Get book info
 	booksRepo := repository.NewBooksRepository(&cfg.Supabase)
