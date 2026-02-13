@@ -7,6 +7,7 @@ import (
 	"github.com/gagipress/gagipress-cli/internal/generator"
 	"github.com/gagipress/gagipress-cli/internal/models"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -98,13 +99,17 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 	// Generate script
 	gen := generator.NewScriptGenerator(cfg, scriptUseGemini)
 
-	fmt.Println("⏳ Generating script...")
+	spinner := ui.NewSpinner("Generating script with AI...")
+	spinner.Start()
 	script, err := gen.GenerateScript(idea, bookTitle, platform)
+	spinner.Stop()
+
 	if err != nil {
-		return fmt.Errorf("failed to generate script: %w", err)
+		ui.Error(fmt.Sprintf("Script generation failed: %v", err))
+		return err
 	}
 
-	fmt.Println("✅ Script generated!")
+	ui.Success("Script generated!")
 	fmt.Println("\n" + repeatStr("═", 60))
 
 	// Display script

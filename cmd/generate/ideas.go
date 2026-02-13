@@ -7,6 +7,7 @@ import (
 	"github.com/gagipress/gagipress-cli/internal/generator"
 	"github.com/gagipress/gagipress-cli/internal/prompts"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -107,25 +108,34 @@ func runGenerateIdeas(cmd *cobra.Command, args []string) error {
 		fmt.Printf("   Niche: %s\n\n", niche)
 
 		// Generate ideas
-		fmt.Println("⏳ Generating ideas...")
+		spinner := ui.NewSpinner(fmt.Sprintf("Generating %d ideas...", count))
+		spinner.Start()
 		ideas, err := gen.GenerateIdeas(book.title, book.genre, book.audience, niche, count)
+		spinner.Stop()
+
 		if err != nil {
-			fmt.Printf("❌ Failed: %v\n\n", err)
+			ui.Error(fmt.Sprintf("Generation failed: %v", err))
+			fmt.Println()
 			continue
 		}
 
-		fmt.Printf("✅ Generated %d ideas\n", len(ideas))
+		ui.Success(fmt.Sprintf("Generated %d ideas", len(ideas)))
 		totalGenerated += len(ideas)
 
 		// Save to database
-		fmt.Println("💾 Saving to database...")
+		spinner = ui.NewSpinner("Saving to database...")
+		spinner.Start()
 		savedIdeas, err := gen.SaveIdeas(ideas, &book.id)
+		spinner.Stop()
+
 		if err != nil {
-			fmt.Printf("⚠️  Save failed: %v\n\n", err)
+			ui.Warning(fmt.Sprintf("Save failed: %v", err))
+			fmt.Println()
 			continue
 		}
 
-		fmt.Printf("✅ Saved %d ideas\n\n", len(savedIdeas))
+		ui.Success(fmt.Sprintf("Saved %d ideas", len(savedIdeas)))
+		fmt.Println()
 		totalSaved += len(savedIdeas)
 	}
 
