@@ -1,12 +1,14 @@
 package generator
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/gagipress/gagipress-cli/internal/ai"
 	"github.com/gagipress/gagipress-cli/internal/config"
+	"github.com/gagipress/gagipress-cli/internal/errors"
 	"github.com/gagipress/gagipress-cli/internal/models"
 	"github.com/gagipress/gagipress-cli/internal/prompts"
 	"github.com/gagipress/gagipress-cli/internal/repository"
@@ -50,30 +52,40 @@ func (g *ScriptGenerator) GenerateScript(idea *models.ContentIdea, bookTitle, pl
 	var responseText string
 	var err error
 
-	// Try OpenAI first unless explicitly using Gemini
+	ctx := context.Background()
+
+	// Try OpenAI first with retry logic unless explicitly using Gemini
 	if !g.useGemini {
 		fmt.Println("🤖 Using OpenAI for script generation...")
-		responseText, err = g.openaiClient.GenerateText(prompt, 0.7)
-		if err != nil {
-			fmt.Printf("⚠️  OpenAI failed: %v\n", err)
+
+		retryErr := errors.Retry(ctx, errors.DefaultRetryConfig(), func() error {
+			responseText, err = g.openaiClient.GenerateText(prompt, 0.7)
+			if err != nil {
+				return errors.Wrap(err, errors.ErrorTypeAPI, "OpenAI API call failed")
+			}
+			return nil
+		})
+
+		if retryErr != nil {
+			fmt.Printf("⚠️  OpenAI failed after retries: %v\n", retryErr)
 			fmt.Println("🔄 Falling back to Gemini...")
 			g.useGemini = true
 		}
 	}
 
-	// Fallback to Gemini
+	// Fallback to Gemini if OpenAI failed or explicitly requested
 	if g.useGemini {
 		fmt.Println("🤖 Using Gemini for script generation...")
 		responseText, err = g.geminiClient.GenerateText(prompt)
 		if err != nil {
-			return nil, fmt.Errorf("both OpenAI and Gemini failed: %w", err)
+			return nil, errors.Wrap(err, errors.ErrorTypeAPI, "both OpenAI and Gemini failed")
 		}
 	}
 
 	// Parse JSON response
 	script, err := g.parseScriptFromResponse(responseText)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse AI response: %w", err)
+		return nil, errors.Wrap(err, errors.ErrorTypeValidation, "failed to parse AI response")
 	}
 
 	return script, nil
