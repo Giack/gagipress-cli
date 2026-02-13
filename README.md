@@ -212,15 +212,29 @@ gagipress-cli/
 ### Running Tests
 
 ```bash
-# Unit tests
-go test ./...
+# Run all tests
+mise exec -- go test ./...
 
-# Integration tests
-go test ./test/integration/...
+# Run with coverage
+./scripts/test-coverage.sh
 
-# E2E tests
-go test ./test/e2e/...
+# Run only unit tests
+mise exec -- go test ./internal/...
+
+# Run only integration tests (requires credentials)
+SUPABASE_URL=xxx SUPABASE_KEY=xxx mise exec -- go test ./test/integration/... -v
+
+# Run specific package tests
+mise exec -- go test ./internal/models/... -v
+mise exec -- go test ./internal/parser/... -v
 ```
+
+**Test Coverage:**
+- Parser: ~97%
+- Error Handling: ~83%
+- Scheduler: ~52%
+- Models: ~37%
+- Overall: ~40%
 
 ### Building
 
