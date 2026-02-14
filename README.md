@@ -65,6 +65,19 @@ Optional:
 - TikTok access token
 - Amazon KDP credentials
 
+### Troubleshooting
+
+**Commands fail with "Run 'gagipress init' first" even after running init:**
+
+This was a bug in earlier versions where the config file was created with incorrect field names.
+
+Fix:
+```bash
+gagipress fix-config
+```
+
+This will migrate your config file to the correct format. You only need to run this once.
+
 ## Commands
 
 ### Content Generation
