@@ -19,33 +19,33 @@ type Config struct {
 
 // SupabaseConfig holds Supabase connection details
 type SupabaseConfig struct {
-	URL        string `mapstructure:"url"`
-	AnonKey    string `mapstructure:"anon_key"`
-	ServiceKey string `mapstructure:"service_key"`
+	URL        string `mapstructure:"url" yaml:"url"`
+	AnonKey    string `mapstructure:"anon_key" yaml:"anon_key"`
+	ServiceKey string `mapstructure:"service_key" yaml:"service_key"`
 }
 
 // OpenAIConfig holds OpenAI API configuration
 type OpenAIConfig struct {
-	APIKey string `mapstructure:"api_key"`
-	Model  string `mapstructure:"model"`
+	APIKey string `mapstructure:"api_key" yaml:"api_key"`
+	Model  string `mapstructure:"model" yaml:"model"`
 }
 
 // InstagramConfig holds Instagram API configuration
 type InstagramConfig struct {
-	AccessToken string `mapstructure:"access_token"`
-	AccountID   string `mapstructure:"account_id"`
+	AccessToken string `mapstructure:"access_token" yaml:"access_token"`
+	AccountID   string `mapstructure:"account_id" yaml:"account_id"`
 }
 
 // TikTokConfig holds TikTok API configuration
 type TikTokConfig struct {
-	AccessToken string `mapstructure:"access_token"`
-	AccountID   string `mapstructure:"account_id"`
+	AccessToken string `mapstructure:"access_token" yaml:"access_token"`
+	AccountID   string `mapstructure:"account_id" yaml:"account_id"`
 }
 
 // AmazonConfig holds Amazon KDP credentials
 type AmazonConfig struct {
-	Email    string `mapstructure:"email"`
-	Password string `mapstructure:"password"`
+	Email    string `mapstructure:"email" yaml:"email"`
+	Password string `mapstructure:"password" yaml:"password"`
 }
 
 // Load loads configuration from file
