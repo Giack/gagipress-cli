@@ -28,8 +28,19 @@ func runReject(cmd *cobra.Command, args []string) error {
 	fmt.Println("❌ Rejecting Idea")
 	fmt.Println("═════════════════")
 
-	// Update status
 	repo := repository.NewContentRepository(&cfg.Supabase)
+
+	// Resolve ID prefix to full UUID
+	fmt.Print("Resolving idea ID... ")
+	idea, err := repo.GetIdeaByIDPrefix(ideaID)
+	if err != nil {
+		fmt.Println("❌ FAILED")
+		return fmt.Errorf("failed to resolve idea ID: %w", err)
+	}
+	ideaID = idea.ID
+	fmt.Printf("✅ %s\n", ideaID)
+
+	// Update status
 	fmt.Print("Updating status... ")
 	if err := repo.UpdateIdeaStatus(ideaID, "rejected"); err != nil {
 		fmt.Println("❌ FAILED")

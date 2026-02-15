@@ -161,6 +161,62 @@ func (r *ContentRepository) UpdateIdeaStatus(id string, status string) error {
 	return nil
 }
 
+// GetIdeaByIDPrefix finds a content idea by UUID prefix (minimum 6 characters).
+// Returns an error if the prefix is ambiguous (matches multiple ideas) or not found.
+func (r *ContentRepository) GetIdeaByIDPrefix(prefix string) (*models.ContentIdea, error) {
+	if len(prefix) < 6 {
+		return nil, fmt.Errorf("prefix too short: must be at least 6 characters, got %d", len(prefix))
+	}
+
+	url := fmt.Sprintf("%s/rest/v1/content_ideas?select=*&id=like.%s*", r.config.URL, prefix)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get idea by prefix: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get idea by prefix: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var ideas []models.ContentIdea
+	if err := json.Unmarshal(body, &ideas); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	switch len(ideas) {
+	case 0:
+		return nil, fmt.Errorf("no idea found with ID prefix %q", prefix)
+	case 1:
+		return &ideas[0], nil
+	default:
+		ids := make([]string, len(ideas))
+		for i, idea := range ideas {
+			ids[i] = idea.ID
+		}
+		return nil, fmt.Errorf("ambiguous prefix %q matches %d ideas: %s", prefix, len(ideas), strings.Join(ids, ", "))
+	}
+}
+
 // CreateScript creates a new content script
 func (r *ContentRepository) CreateScript(input *models.ContentScriptInput) (*models.ContentScript, error) {
 	url := fmt.Sprintf("%s/rest/v1/content_scripts", r.config.URL)
