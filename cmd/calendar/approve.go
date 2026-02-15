@@ -6,8 +6,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +36,7 @@ func runApprove(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("✅ Calendar Approval")
-	fmt.Println("════════════════════")
+	fmt.Println(ui.StyleHeader.Render("✅ Calendar Approval"))
 
 	// Get pending entries
 	calendarRepo := repository.NewCalendarRepository(&cfg.Supabase)
@@ -58,53 +59,82 @@ func runApprove(cmd *cobra.Command, args []string) error {
 	skipped := 0
 
 	for i, entry := range entries {
-		fmt.Printf("Entry %d/%d\n", i+1, len(entries))
-		fmt.Println(strings.Repeat("─", 60))
-		fmt.Printf("ID:           %s\n", entry.ID[:8])
-		fmt.Printf("Scheduled:    %s\n", entry.ScheduledFor.Format("Mon Jan 02, 2006 at 15:04"))
-		fmt.Printf("Platform:     %s\n", entry.Platform)
-		if entry.ScriptID != nil {
-			fmt.Printf("Script ID:    %s\n", (*entry.ScriptID)[:8])
-		}
-		fmt.Println(strings.Repeat("─", 60))
+		// Create entry preview box
+		previewStyle := lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(ui.ColorPrimary).
+			Padding(1, 2).
+			Width(60)
 
-		fmt.Print("\n[A]pprove / [S]kip / [R]eject? ")
+		scriptInfo := "N/A"
+		if entry.ScriptID != nil {
+			scriptID := *entry.ScriptID
+			if len(scriptID) > 8 {
+				scriptID = scriptID[:8] + "…"
+			}
+			scriptInfo = scriptID
+		}
+
+		entryContent := fmt.Sprintf(
+			"%s\n"+
+				"Scheduled:  %s\n"+
+				"Platform:   %s\n"+
+				"Script ID:  %s",
+			ui.StyleHeader.Render(fmt.Sprintf("Entry %d/%d", i+1, len(entries))),
+			ui.FormatDate(entry.ScheduledFor),
+			entry.Platform,
+			scriptInfo,
+		)
+
+		fmt.Println(previewStyle.Render(entryContent))
+
+		// Color-coded prompt
+		promptText := ui.StyleSuccess.Render("[A]pprove") + " / " +
+			ui.StyleMuted.Render("[S]kip") + " / " +
+			ui.StyleError.Render("[R]eject") + "? "
+		fmt.Print(promptText)
 		action, _ := reader.ReadString('\n')
 		action = strings.ToUpper(strings.TrimSpace(action))
 
 		switch action {
 		case "A":
 			if err := calendarRepo.UpdateEntryStatus(entry.ID, "approved"); err != nil {
-				fmt.Printf("❌ Failed to approve: %v\n\n", err)
+				fmt.Printf("%s\n\n", ui.StyleError.Render("❌ Failed to approve: "+err.Error()))
 				continue
 			}
-			fmt.Println("✅ Approved")
+			fmt.Println(ui.StyleSuccess.Render("✅ Approved"))
 			approved++
 
 		case "R":
 			if err := calendarRepo.DeleteEntry(entry.ID); err != nil {
-				fmt.Printf("❌ Failed to reject: %v\n\n", err)
+				fmt.Printf("%s\n\n", ui.StyleError.Render("❌ Failed to reject: "+err.Error()))
 				continue
 			}
-			fmt.Println("❌ Rejected")
+			fmt.Println(ui.StyleError.Render("❌ Rejected"))
 			rejected++
 
 		case "S":
-			fmt.Println("⏭️  Skipped")
+			fmt.Println(ui.StyleMuted.Render("⏭️  Skipped"))
 			skipped++
 
 		default:
-			fmt.Println("⏭️  Invalid input, skipped")
+			fmt.Println(ui.StyleMuted.Render("⏭️  Invalid input, skipped"))
 			skipped++
 		}
+		fmt.Println()
 	}
 
 	// Summary
-	fmt.Println(strings.Repeat("═", 60))
-	fmt.Printf("Summary: %d approved | %d rejected | %d skipped\n", approved, rejected, skipped)
+	fmt.Println(ui.StyleHeader.Render("Summary"))
+	summaryText := fmt.Sprintf("%s approved | %s rejected | %s skipped",
+		ui.StyleSuccess.Render(fmt.Sprintf("%d", approved)),
+		ui.StyleError.Render(fmt.Sprintf("%d", rejected)),
+		ui.StyleMuted.Render(fmt.Sprintf("%d", skipped)),
+	)
+	fmt.Println(summaryText)
 
 	if approved > 0 {
-		fmt.Printf("\n✅ %d entries approved and ready for publishing\n", approved)
+		fmt.Printf("\n%s\n", ui.StyleSuccess.Render(fmt.Sprintf("✅ %d entries approved and ready for publishing", approved)))
 	}
 
 	return nil
