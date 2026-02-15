@@ -9,6 +9,7 @@ import (
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/models"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -104,7 +105,7 @@ func runCorrelate(cmd *cobra.Command, args []string) error {
 	fmt.Println("📊 Correlation Results")
 	fmt.Println(strings.Repeat("─", 60))
 	fmt.Printf("Data points:          %d days\n", len(dailyData))
-	fmt.Printf("Total views:          %s\n", formatNumber(sumViews(dailyData)))
+	fmt.Printf("Total views:          %s\n", ui.FormatNumber(sumViews(dailyData)))
 	fmt.Printf("Total sales:          %d units\n", sumSales(dailyData))
 	fmt.Printf("Correlation (r):      %.3f\n", correlation)
 	fmt.Println()
