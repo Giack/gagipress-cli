@@ -2,10 +2,10 @@ package ideas
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -33,9 +33,6 @@ func runList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("💡 Content Ideas")
-	fmt.Println("═════════════════")
-
 	// Get ideas
 	repo := repository.NewContentRepository(&cfg.Supabase)
 	ideas, err := repo.GetIdeas(statusFilter, limitList)
@@ -48,40 +45,37 @@ func runList(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// Print table header
-	fmt.Printf("%-8s %-12s %-15s %-50s %-6s\n", "ID", "Type", "Status", "Description", "Score")
-	fmt.Println(strings.Repeat("─", 100))
-
-	// Print ideas
-	for _, idea := range ideas {
-		id := idea.ID
-		if len(id) > 8 {
-			id = id[:8]
-		}
-
-		ideaType := idea.Type
-		if len(ideaType) > 12 {
-			ideaType = ideaType[:9] + "..."
-		}
-
-		status := idea.Status
-		if len(status) > 15 {
-			status = status[:12] + "..."
-		}
-
-		desc := idea.BriefDescription
-		if len(desc) > 50 {
-			desc = desc[:47] + "..."
-		}
-
+	// Build table rows
+	rows := make([][]string, len(ideas))
+	for i, idea := range ideas {
+		// Format score
 		score := "N/A"
 		if idea.RelevanceScore != nil {
 			score = fmt.Sprintf("%d", *idea.RelevanceScore)
 		}
 
-		fmt.Printf("%-8s %-12s %-15s %-50s %-6s\n",
-			id, ideaType, status, desc, score)
+		// Format status with color
+		status := ui.FormatStatus(idea.Status)
+
+		// No manual truncation - let table handle it
+		rows[i] = []string{
+			ui.FormatUUID(idea.ID, 8),
+			idea.Type,
+			status,
+			idea.BriefDescription, // Full description
+			score,
+		}
 	}
+
+	// Render table
+	table := ui.RenderTable(ui.TableConfig{
+		Headers:  []string{"ID", "Type", "Status", "Description", "Score"},
+		Rows:     rows,
+		MaxWidth: ui.GetTerminalWidth(),
+	})
+
+	fmt.Println(ui.StyleHeader.Render("💡 Content Ideas"))
+	fmt.Println(table)
 
 	fmt.Printf("\nTotal ideas: %d\n", len(ideas))
 
