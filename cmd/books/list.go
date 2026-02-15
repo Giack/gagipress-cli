@@ -39,7 +39,7 @@ func runList(cmd *cobra.Command, args []string) error {
 	rows := make([][]string, len(books))
 	for i, book := range books {
 		rows[i] = []string{
-			ui.FormatUUID(book.ID, 8),
+			book.ID, // Full UUID for copy-paste and approval
 			book.Title,        // No truncation
 			book.Genre,
 			book.TargetAudience,

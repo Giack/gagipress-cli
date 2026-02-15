@@ -59,7 +59,7 @@ func runList(cmd *cobra.Command, args []string) error {
 
 		// No manual truncation - let table handle it
 		rows[i] = []string{
-			ui.FormatUUID(idea.ID, 8),
+			idea.ID, // Full UUID for copy-paste and approval
 			idea.Type,
 			status,
 			idea.BriefDescription, // Full description
