@@ -176,7 +176,7 @@ func aggregateByDay(sales []models.BookSale, metrics []models.PostMetric) []mode
 		dateKey := sale.SaleDate.Format("2006-01-02")
 		if _, ok := dataMap[dateKey]; !ok {
 			dataMap[dateKey] = &models.CorrelationPoint{
-				Date: sale.SaleDate,
+				Date: sale.SaleDate.Time,
 			}
 		}
 		dataMap[dateKey].UnitsSold += sale.UnitsSold

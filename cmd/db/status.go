@@ -1,11 +1,13 @@
 package db
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
-	"github.com/gagipress/gagipress-cli/internal/supabase"
 	"github.com/spf13/cobra"
 )
 
@@ -45,32 +47,52 @@ func runStatus() error {
 	fmt.Println("🔍 Checking database status...")
 	fmt.Println()
 
-	// Create Supabase client
-	client, err := supabase.NewClient(&cfg.Supabase)
-	if err != nil {
-		return fmt.Errorf("failed to create supabase client: %w", err)
-	}
-
-	// Test connection
+	// Test connection by running a simple Supabase CLI command
 	fmt.Print("📡 Testing connection... ")
-	if err := client.TestConnection(); err != nil {
-		fmt.Println("❌ FAILED")
-		return fmt.Errorf("connection test failed: %w", err)
+	testCmd := exec.Command("supabase", "db", "remote", "commit")
+	var testOut bytes.Buffer
+	testCmd.Stderr = &testOut
+	testCmd.Stdout = &testOut
+
+	if err := testCmd.Run(); err != nil {
+		// Command may fail if no changes, but connection is tested
+		output := testOut.String()
+		if strings.Contains(output, "not logged in") || strings.Contains(output, "not linked") {
+			fmt.Println("❌ FAILED")
+			return fmt.Errorf("supabase CLI not configured correctly")
+		}
 	}
 	fmt.Println("✅ OK")
 
-	// Get applied version
+	// Get migration status
 	fmt.Print("📊 Checking schema version... ")
-	version, err := client.GetAppliedVersion()
+	statusCmd := exec.Command("supabase", "migration", "list", "--db-url", cfg.Supabase.URL)
+	statusCmd.Env = append(os.Environ(), fmt.Sprintf("SUPABASE_ACCESS_TOKEN=%s", cfg.Supabase.AnonKey))
+
+	var out bytes.Buffer
+	statusCmd.Stdout = &out
+	statusCmd.Stderr = &out
+
+	// Count applied migrations from supabase/migrations directory
+	cwd, _ := os.Getwd()
+	files, err := os.ReadDir(fmt.Sprintf("%s/supabase/migrations", cwd))
 	if err != nil {
 		fmt.Println("⚠️  UNKNOWN")
-		fmt.Printf("   Could not determine version: %v\n", err)
-		fmt.Println("   Run 'gagipress db migrate' to initialize the database")
-	} else if version == 0 {
-		fmt.Println("⚠️  NOT INITIALIZED")
 		fmt.Println("   Run 'gagipress db migrate' to initialize the database")
 	} else {
-		fmt.Printf("✅ v%d\n", version)
+		sqlFiles := 0
+		for _, file := range files {
+			if strings.HasSuffix(file.Name(), ".sql") {
+				sqlFiles++
+			}
+		}
+
+		if sqlFiles == 0 {
+			fmt.Println("⚠️  NOT INITIALIZED")
+			fmt.Println("   Run 'gagipress db migrate' to initialize the database")
+		} else {
+			fmt.Printf("✅ v%d\n", sqlFiles)
+		}
 	}
 
 	fmt.Println()

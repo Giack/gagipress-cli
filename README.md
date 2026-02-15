@@ -19,6 +19,7 @@ Gagipress CLI automates content generation, scheduling, and analytics for TikTok
 ### Prerequisites
 
 - Go 1.24+ ([Download](https://go.dev/dl/))
+- Supabase CLI ([Install](https://supabase.com/docs/guides/cli/getting-started))
 - Supabase account ([Sign up](https://supabase.com))
 - OpenAI API key ([Get one](https://platform.openai.com))
 

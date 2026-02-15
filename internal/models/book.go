@@ -12,7 +12,7 @@ type Book struct {
 	TargetAudience  string     `json:"target_audience,omitempty"`
 	KDPASIN         string     `json:"kdp_asin,omitempty"`
 	CoverImageURL   string     `json:"cover_image_url,omitempty"`
-	PublicationDate *time.Time `json:"publication_date,omitempty"`
+	PublicationDate *Date      `json:"publication_date,omitempty"`
 	CurrentRank     *int       `json:"current_rank,omitempty"`
 	TotalSales      int        `json:"total_sales"`
 	CreatedAt       time.Time  `json:"created_at"`
@@ -26,7 +26,7 @@ type BookInput struct {
 	TargetAudience  string     `json:"target_audience,omitempty"`
 	KDPASIN         string     `json:"kdp_asin,omitempty"`
 	CoverImageURL   string     `json:"cover_image_url,omitempty"`
-	PublicationDate *time.Time `json:"publication_date,omitempty"`
+	PublicationDate *Date      `json:"publication_date,omitempty"`
 }
 
 // Validate validates book input

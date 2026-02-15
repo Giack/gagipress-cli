@@ -1,0 +1,26 @@
+-- {{DESCRIPTION}}
+-- Created: {{DATE}}
+
+-- Add column
+-- ALTER TABLE {{TABLE_NAME}}
+-- ADD COLUMN IF NOT EXISTS {{COLUMN_NAME}} {{TYPE}} {{CONSTRAINTS}};
+
+-- Modify column
+-- ALTER TABLE {{TABLE_NAME}}
+-- ALTER COLUMN {{COLUMN_NAME}} TYPE {{NEW_TYPE}};
+
+-- Add constraint
+-- ALTER TABLE {{TABLE_NAME}}
+-- ADD CONSTRAINT {{CONSTRAINT_NAME}} {{CONSTRAINT_TYPE}};
+
+-- Drop column (use with caution)
+-- ALTER TABLE {{TABLE_NAME}}
+-- DROP COLUMN IF EXISTS {{COLUMN_NAME}};
+
+-- Rename column
+-- ALTER TABLE {{TABLE_NAME}}
+-- RENAME COLUMN {{OLD_NAME}} TO {{NEW_NAME}};
+
+-- Add default value
+-- ALTER TABLE {{TABLE_NAME}}
+-- ALTER COLUMN {{COLUMN_NAME}} SET DEFAULT {{VALUE}};

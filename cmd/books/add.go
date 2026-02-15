@@ -76,7 +76,7 @@ func runAdd(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			fmt.Printf("⚠️  Invalid date format, skipping publication date\n")
 		} else {
-			input.PublicationDate = &parsedDate
+			input.PublicationDate = &models.Date{Time: parsedDate}
 		}
 	}
 

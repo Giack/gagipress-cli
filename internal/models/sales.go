@@ -8,7 +8,7 @@ import (
 type BookSale struct {
 	ID         string    `json:"id"`
 	BookID     string    `json:"book_id"`
-	SaleDate   time.Time `json:"sale_date"`
+	SaleDate   Date      `json:"date"`
 	UnitsSold  int       `json:"units_sold"`
 	Royalty    float64   `json:"royalty"`
 	PageReads  int       `json:"page_reads"`
@@ -17,11 +17,11 @@ type BookSale struct {
 
 // BookSaleInput represents input for creating a book sale record
 type BookSaleInput struct {
-	BookID    string    `json:"book_id"`
-	SaleDate  time.Time `json:"sale_date"`
-	UnitsSold int       `json:"units_sold"`
-	Royalty   float64   `json:"royalty"`
-	PageReads int       `json:"page_reads"`
+	BookID    string  `json:"book_id"`
+	SaleDate  Date    `json:"date"`
+	UnitsSold int     `json:"units_sold"`
+	Royalty   float64 `json:"royalty"`
+	PageReads int     `json:"page_reads"`
 }
 
 // Validate validates book sale input

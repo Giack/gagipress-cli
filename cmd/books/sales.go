@@ -119,7 +119,7 @@ func runImport(cmd *cobra.Command, args []string) error {
 		// Create sale record
 		saleInput := &models.BookSaleInput{
 			BookID:    book.ID,
-			SaleDate:  row.OrderDate,
+			SaleDate:  models.Date{Time: row.OrderDate},
 			UnitsSold: row.UnitsSold,
 			Royalty:   row.Royalty,
 			PageReads: row.PageReads,

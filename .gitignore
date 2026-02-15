@@ -9,6 +9,7 @@
 *.dylib
 bin/
 dist/
+gagipress
 
 # Test binary
 *.test
@@ -40,3 +41,8 @@ config.yml
 # OS files
 .DS_Store
 Thumbs.db
+
+# Supabase local files
+supabase/.temp/
+supabase/.branches/
+supabase/seed.sql

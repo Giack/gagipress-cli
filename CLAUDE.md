@@ -9,7 +9,7 @@ Gagipress CLI is a social media automation tool for Amazon KDP publishers, built
 **Tech Stack:**
 - **Language**: Go 1.24+
 - **CLI Framework**: Cobra + Viper (config)
-- **Database**: Supabase (PostgreSQL via REST API)
+- **Database**: Supabase (PostgreSQL via REST API + Supabase CLI for migrations)
 - **AI Providers**: OpenAI (GPT-4o-mini) + Gemini (browser automation via chromedp)
 - **Social APIs**: Instagram Graph API, TikTok Creator API (OAuth setup in progress)
 
@@ -89,7 +89,10 @@ internal/              # Business logic (testable, reusable)
 └── ui/                # CLI UI components (spinners)
 
 test/integration/      # Integration tests (require credentials)
-migrations/            # Supabase database migrations
+migrations/            # Database migration files (SQL)
+supabase/              # Supabase CLI configuration
+├── config.toml        # Supabase project config
+└── migrations/        # Migrations synced for CLI (auto-generated)
 ```
 
 ### Key Architectural Decisions
@@ -172,9 +175,11 @@ migrations/            # Supabase database migrations
 
 **Migration Tool:**
 ```bash
-gagipress db migrate    # Apply pending migrations
+gagipress db migrate    # Sync migrations and apply via Supabase CLI
 gagipress db status     # Check connection + schema version
 ```
+
+**Important**: The `migrate` command uses Supabase CLI (`supabase db push`) to apply migrations. Migrations are stored in `migrations/` and synced to `supabase/migrations/` automatically.
 
 ### Testing Strategy
 
@@ -216,12 +221,31 @@ Without both tags, field names mismatch between save/load, causing config to app
 
 **Historical Bug**: Versions before 2026-02-14 only had `mapstructure` tags, causing Viper to write camelCase fields (`anonkey`) but expect snake_case (`anon_key`) when reading. The `fix-config` command migrates old configs.
 
-### Supabase Direct HTTP Usage
+### Database Migration Strategy
 
-**Why not use supabase-go SDK?**
-- SDK is experimental and lacks features
-- Direct REST API gives more control
-- Easier to debug (can see exact HTTP calls)
+**Supabase CLI for DDL Operations:**
+- Database migrations use **Supabase CLI** (`supabase db push`)
+- Migration files stored in `migrations/` directory
+- Files follow naming convention: `001_description.sql`, `002_description.sql`
+- Uses native PostgreSQL functions (`gen_random_uuid()`) instead of extensions
+
+**Why Supabase CLI instead of custom migration system?**
+- Official tooling with full PostgreSQL support
+- Better error handling and rollback support
+- Avoids PostgREST limitations (REST API not designed for DDL)
+- Maintains migration history in `supabase_migrations.schema_migrations`
+
+**UUID Generation:**
+- Use `gen_random_uuid()` (native PostgreSQL 13+) instead of `uuid_generate_v4()` from `uuid-ossp`
+- No extension installation required
+- Works out-of-the-box on Supabase
+
+### Supabase Direct HTTP Usage (for CRUD only)
+
+**Repository pattern uses REST API for data operations:**
+- All CRUD operations go through PostgREST API
+- Direct HTTP calls (not supabase-go SDK which is experimental)
+- Each repository handles a single table/domain
 
 **Pattern to follow:**
 ```go
@@ -236,6 +260,8 @@ req.Header.Set("apikey", apiKey)
 req.Header.Set("Authorization", "Bearer "+apiKey)
 req.Header.Set("Prefer", "return=representation")  // For INSERT/UPDATE
 ```
+
+**Important**: Use REST API only for CRUD operations (SELECT/INSERT/UPDATE/DELETE), not for DDL (CREATE TABLE/ALTER TABLE). Migrations must use Supabase CLI.
 
 ### Gemini Browser Automation
 
