@@ -149,12 +149,7 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	// Save to database
 	fmt.Print("\n💾 Saving script... ")
-	format := "vertical"
-	if platform == "instagram" && script.EstimatedLength > 60 {
-		format = "square" // might want square for longer Instagram content
-	}
-
-	savedScript, err := gen.SaveScript(script, idea.ID, format)
+	savedScript, err := gen.SaveScript(script, idea.ID)
 	if err != nil {
 		fmt.Println("❌ FAILED")
 		return fmt.Errorf("failed to save script: %w", err)

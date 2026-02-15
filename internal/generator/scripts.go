@@ -131,15 +131,14 @@ func (g *ScriptGenerator) parseScriptFromResponse(response string) (*GeneratedSc
 }
 
 // SaveScript saves generated script to the database
-func (g *ScriptGenerator) SaveScript(script *GeneratedScript, ideaID string, format string) (*models.ContentScript, error) {
+func (g *ScriptGenerator) SaveScript(script *GeneratedScript, ideaID string) (*models.ContentScript, error) {
 	input := &models.ContentScriptInput{
-		IdeaID:          ideaID,
-		Hook:            script.Hook,
-		MainContent:     script.MainContent,
-		CTA:             script.CTA,
-		Hashtags:        script.Hashtags,
-		EstimatedLength: script.EstimatedLength,
-		Format:          format,
+		IdeaID:            ideaID,
+		Hook:              script.Hook,
+		FullScript:        script.MainContent,
+		CTA:               script.CTA,
+		Hashtags:          script.Hashtags,
+		EstimatedDuration: script.EstimatedLength,
 	}
 
 	if err := input.Validate(); err != nil {
