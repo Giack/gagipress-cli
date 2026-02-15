@@ -5,6 +5,7 @@ import (
 
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -25,30 +26,30 @@ func runReject(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("❌ Rejecting Idea")
-	fmt.Println("═════════════════")
+	fmt.Println(ui.StyleHeader.Render("❌ Rejecting Idea"))
+	fmt.Println()
 
 	repo := repository.NewContentRepository(&cfg.Supabase)
 
 	// Resolve ID prefix to full UUID
-	fmt.Print("Resolving idea ID... ")
+	fmt.Print(ui.StyleMuted.Render("Resolving idea ID... "))
 	idea, err := repo.GetIdeaByIDPrefix(ideaID)
 	if err != nil {
-		fmt.Println("❌ FAILED")
+		fmt.Println(ui.StyleError.Render("✗ FAILED"))
 		return fmt.Errorf("failed to resolve idea ID: %w", err)
 	}
 	ideaID = idea.ID
-	fmt.Printf("✅ %s\n", ideaID)
+	fmt.Println(ui.StyleSuccess.Render("✓ " + ideaID))
 
 	// Update status
-	fmt.Print("Updating status... ")
+	fmt.Print(ui.StyleMuted.Render("Updating status... "))
 	if err := repo.UpdateIdeaStatus(ideaID, "rejected"); err != nil {
-		fmt.Println("❌ FAILED")
+		fmt.Println(ui.StyleError.Render("✗ FAILED"))
 		return fmt.Errorf("failed to reject idea: %w", err)
 	}
 
-	fmt.Println("✅ OK")
-	fmt.Printf("\n✅ Idea %s rejected\n", ideaID)
+	fmt.Println(ui.StyleSuccess.Render("✓ OK"))
+	fmt.Printf("\n%s\n", ui.StyleError.Render(fmt.Sprintf("❌ Idea %s rejected", ideaID)))
 
 	return nil
 }
