@@ -37,11 +37,12 @@ func runEdit(cmd *cobra.Command, args []string) error {
 	fmt.Println("════════════")
 	fmt.Print("Loading book... ")
 
-	book, err := repo.GetByID(bookID)
+	book, err := repo.GetBookByIDPrefix(bookID)
 	if err != nil {
 		fmt.Println("❌ FAILED")
 		return fmt.Errorf("failed to get book: %w", err)
 	}
+	bookID = book.ID
 	fmt.Println("✅ OK")
 
 	fmt.Printf("Current book: %s\n", book.Title)
@@ -122,7 +123,7 @@ func runEdit(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			fmt.Printf("⚠️  Invalid date format, keeping current value\n")
 		} else {
-			input.PublicationDate = &parsedDate
+			input.PublicationDate = &models.Date{Time: parsedDate}
 		}
 	}
 

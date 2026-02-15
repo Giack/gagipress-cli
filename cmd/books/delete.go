@@ -30,11 +30,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	repo := repository.NewBooksRepository(&cfg.Supabase)
 
-	// Get book for confirmation
-	book, err := repo.GetByID(bookID)
+	// Resolve ID prefix to full book
+	book, err := repo.GetBookByIDPrefix(bookID)
 	if err != nil {
 		return fmt.Errorf("failed to get book: %w", err)
 	}
+	bookID = book.ID
 
 	fmt.Println("📚 Delete Book")
 	fmt.Println("══════════════")
