@@ -2,10 +2,10 @@ package books
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +23,6 @@ func runList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("📚 Book Catalog")
-	fmt.Println("═══════════════")
-
 	// Get all books
 	repo := repository.NewBooksRepository(&cfg.Supabase)
 	books, err := repo.GetAll()
@@ -38,38 +35,26 @@ func runList(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// Print table header
-	fmt.Printf("%-8s %-40s %-20s %-15s %-12s\n", "ID", "Title", "Genre", "ASIN", "Sales")
-	fmt.Println(strings.Repeat("─", 100))
-
-	// Print books
-	for _, book := range books {
-		id := book.ID
-		if len(id) > 8 {
-			id = id[:8]
+	// Build rows
+	rows := make([][]string, len(books))
+	for i, book := range books {
+		rows[i] = []string{
+			ui.FormatUUID(book.ID, 8),
+			book.Title,        // No truncation
+			book.Genre,
+			book.TargetAudience,
 		}
-
-		title := book.Title
-		if len(title) > 40 {
-			title = title[:37] + "..."
-		}
-
-		genre := book.Genre
-		if len(genre) > 20 {
-			genre = genre[:17] + "..."
-		}
-
-		asin := book.KDPASIN
-		if asin == "" {
-			asin = "N/A"
-		}
-		if len(asin) > 15 {
-			asin = asin[:12] + "..."
-		}
-
-		fmt.Printf("%-8s %-40s %-20s %-15s %-12d\n",
-			id, title, genre, asin, book.TotalSales)
 	}
+
+	// Render
+	table := ui.RenderTable(ui.TableConfig{
+		Headers:  []string{"ID", "Title", "Genre", "Target Audience"},
+		Rows:     rows,
+		MaxWidth: ui.GetTerminalWidth(),
+	})
+
+	fmt.Println(ui.StyleHeader.Render("📚 Book Catalog"))
+	fmt.Println(table)
 
 	fmt.Printf("\nTotal books: %d\n", len(books))
 
