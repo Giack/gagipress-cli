@@ -110,9 +110,33 @@ func runPublish(cmd *cobra.Command, args []string) error {
 		if cfg.Blotato.TemplateID == "" {
 			return fmt.Errorf("blotato TemplateID is not configured but --with-media was requested")
 		}
-		// Media generation will be implemented in Phase 5
-		// For now, it's just a placeholder or we can implement it if needed right away
-		ui.Warning("Media generation is scheduled for Phase 5 implementation.")
+
+		// Media generation logic
+		// We pass the script as a prompt for the AI template generator
+		spinner = ui.NewSpinner(fmt.Sprintf("Requesting Blotato visual creation (Template %s)...", cfg.Blotato.TemplateID))
+		spinner.Start()
+
+		prompt := fmt.Sprintf("Create a promotional visual for a book post.\nHook: %s\nMain topic: %s", script.Hook, script.FullScript)
+		creationID, err := blotatoClient.GenerateVisual(cfg.Blotato.TemplateID, prompt)
+		spinner.Stop()
+
+		if err != nil {
+			return fmt.Errorf("failed to start visual generation: %w", err)
+		}
+
+		fmt.Printf("✅ Blotato generation started (ID: %s). Waiting for render to finish...\n", creationID)
+
+		spinner = ui.NewSpinner("Waiting for Blotato visual render...")
+		spinner.Start()
+		mediaURL, err := blotatoClient.WaitForVisualCreation(creationID)
+		spinner.Stop()
+
+		if err != nil {
+			return fmt.Errorf("failed during visual generation polling: %w", err)
+		}
+
+		fmt.Printf("✅ Blotato visual generated successfully: %s\n", mediaURL)
+		mediaUrls = append(mediaUrls, mediaURL)
 	}
 
 	// 7. Publish/Schedule Post
