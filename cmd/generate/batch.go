@@ -86,7 +86,9 @@ func runBatch(cmd *cobra.Command, args []string) error {
 			if err == nil {
 				bookTitle = book.Title
 				if book.KDPASIN != "" {
-					amazonURL = fmt.Sprintf("https://www.amazon.it/dp/%s", book.KDPASIN)
+					// Build Amazon URL with UTM tracking parameters
+					amazonURL = fmt.Sprintf("https://www.amazon.it/dp/%s?tag=gagipress-21&utm_source=%s&utm_medium=social&utm_campaign=%s",
+						book.KDPASIN, batchPlatform, idea.ID)
 				}
 			}
 		}
