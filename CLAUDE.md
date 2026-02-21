@@ -17,37 +17,36 @@ Gagipress CLI is a social media automation tool for Amazon KDP publishers, built
 
 ## Development Commands
 
+**Always prefer Makefile targets** over raw `mise exec -- go ...` commands. Run `make help` to see all available targets. Use raw Go commands only for ad-hoc operations not covered by the Makefile (e.g., running a specific test with flags).
+
 ### Building & Running
 
 ```bash
-# Build the CLI
-go build -o gagipress
+# Build the CLI (output in bin/)
+make build
 
-# Run without building
-go run main.go [command]
+# Run without building (no Makefile target — use raw command)
+mise exec -- go run main.go [command]
 
 # Build and install globally
-go build -o gagipress && sudo mv gagipress /usr/local/bin/
+make install
 ```
 
 ### Testing
 
 ```bash
 # Run all unit tests
-mise exec -- go test ./...
-
-# Run tests for a specific package
-mise exec -- go test ./internal/models/... -v
-mise exec -- go test ./internal/parser/... -v
+make test
 
 # Run with coverage
-./scripts/test-coverage.sh
+make test-coverage
 
 # Run only integration tests (requires Supabase credentials)
-SUPABASE_URL=xxx SUPABASE_KEY=xxx mise exec -- go test ./test/integration/... -v
+make test-integration
 
-# Run tests excluding integration (fast)
-mise exec -- go test ./internal/... -v
+# Run tests for a specific package (no Makefile target — use raw command)
+mise exec -- go test ./internal/models/... -v
+mise exec -- go test ./internal/parser/... -v
 ```
 
 **Note**: `mise exec` is used for Go version management. If not using mise, just use `go test` directly.
@@ -56,10 +55,10 @@ mise exec -- go test ./internal/... -v
 
 ```bash
 # Check for issues (should be run before commits)
-go vet ./...
+make vet
 
 # Format code
-go fmt ./...
+make fmt
 ```
 
 ## Architecture & Patterns
@@ -240,6 +239,18 @@ Without both tags, field names mismatch between save/load, causing config to app
 - No extension installation required
 - Works out-of-the-box on Supabase
 
+**Supabase CLI Commands:**
+```bash
+# Apply migrations to remote database
+supabase db push
+
+# Generate a schema diff (useful when making manual changes)
+supabase db diff
+
+# Check migration status
+supabase migration list
+```
+
 ### Supabase Direct HTTP Usage (for CRUD only)
 
 **Repository pattern uses REST API for data operations:**
@@ -320,13 +331,15 @@ Prompt templates are in `internal/prompts/templates.go`:
 
 ### Debugging Failed Tests
 
+These are ad-hoc commands with specific flags — no Makefile targets for these:
+
 ```bash
 # Run specific test with verbose output
-go test ./internal/parser -run TestParseKDPReport -v
+mise exec -- go test ./internal/parser -run TestParseKDPReport -v
 
 # Run with coverage to see what's not tested
-go test ./internal/parser -coverprofile=coverage.out
-go tool cover -html=coverage.out
+mise exec -- go test ./internal/parser -coverprofile=coverage.out
+mise exec -- go tool cover -html=coverage.out
 ```
 
 ## Future Development Notes
