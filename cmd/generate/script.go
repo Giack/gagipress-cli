@@ -89,10 +89,14 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	// Get book info
 	bookTitle := "Your Book" // default
+	amazonURL := ""
 	if idea.BookID != nil {
 		book, err := booksRepo.GetByID(*idea.BookID)
 		if err == nil {
 			bookTitle = book.Title
+			if book.KDPASIN != "" {
+				amazonURL = fmt.Sprintf("https://www.amazon.it/dp/%s", book.KDPASIN)
+			}
 		}
 	}
 
@@ -101,7 +105,7 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	spinner := ui.NewSpinner("Generating script with AI...")
 	spinner.Start()
-	script, err := gen.GenerateScript(idea, bookTitle, platform)
+	script, err := gen.GenerateScript(idea, bookTitle, platform, amazonURL)
 	spinner.Stop()
 
 	if err != nil {

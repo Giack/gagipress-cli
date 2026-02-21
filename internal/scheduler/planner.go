@@ -72,6 +72,7 @@ func (p *Planner) PlanWeek(days int, postsPerDay int) ([]*models.ContentCalendar
 			ScriptID:     &script.ID,
 			ScheduledFor: slot.Time,
 			Platform:     platform,
+			PostType:     "reel",
 		}
 
 		calendar = append(calendar, entry)

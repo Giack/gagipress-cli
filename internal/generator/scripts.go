@@ -43,11 +43,12 @@ type GeneratedScript struct {
 	EstimatedLength int      `json:"estimated_length"`
 }
 
-// GenerateScript generates a complete script from an idea
-func (g *ScriptGenerator) GenerateScript(idea *models.ContentIdea, bookTitle, platform string) (*GeneratedScript, error) {
+// GenerateScript generates a complete script from an idea.
+// amazonURL is the direct Amazon link for the CTA (empty string if no ASIN).
+func (g *ScriptGenerator) GenerateScript(idea *models.ContentIdea, bookTitle, platform, amazonURL string) (*GeneratedScript, error) {
 	// Build prompt
 	ideaDescription := idea.BriefDescription
-	prompt := prompts.ScriptPromptTemplate(ideaDescription, bookTitle, platform)
+	prompt := prompts.ScriptPromptTemplate(ideaDescription, bookTitle, platform, amazonURL)
 
 	var responseText string
 	var err error

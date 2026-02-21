@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
+	"github.com/gagipress/gagipress-cli/internal/models"
+	"github.com/gagipress/gagipress-cli/internal/repository"
 	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +30,7 @@ func init() {
 
 func runShow(cmd *cobra.Command, args []string) error {
 	// Load configuration
-	_, err := config.Load()
+	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
@@ -40,22 +42,11 @@ func runShow(cmd *cobra.Command, args []string) error {
 	fmt.Println(ui.StyleHeader.Render(header))
 	fmt.Printf("Showing schedule for next %d days\n\n", daysAhead)
 
-	// Get calendar entries
-	// Note: We'd need to add a GetCalendar method to the repository
-	// For now, we'll show a placeholder
-
-	// Placeholder data structure
-	type CalendarEntry struct {
-		ID           string
-		ScheduledFor time.Time
-		Platform     string
-		Status       string
-		ScriptID     string
-	}
-
-	// In real implementation, fetch from database
-	entries := []CalendarEntry{
-		// Placeholder - would come from repository.GetCalendar()
+	// Get calendar entries from database
+	calendarRepo := repository.NewCalendarRepository(&cfg.Supabase)
+	entries, err := calendarRepo.GetEntries(statusFilter, 0)
+	if err != nil {
+		return fmt.Errorf("failed to get calendar entries: %w", err)
 	}
 
 	if len(entries) == 0 {
@@ -65,7 +56,7 @@ func runShow(cmd *cobra.Command, args []string) error {
 	}
 
 	// Group by date
-	byDate := make(map[string][]CalendarEntry)
+	byDate := make(map[string][]models.ContentCalendar)
 	for _, entry := range entries {
 		dateKey := entry.ScheduledFor.Format("2006-01-02")
 		byDate[dateKey] = append(byDate[dateKey], entry)
