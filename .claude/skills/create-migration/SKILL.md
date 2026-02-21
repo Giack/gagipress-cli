@@ -44,8 +44,8 @@ Create a new database migration file following project conventions.
 
    Next steps:
    1. Review the migration file
-   2. Run: ./gagipress db migrate
-   3. Verify: ./gagipress db status
+   2. Run: bin/gagipress db migrate
+   3. Verify: bin/gagipress db status
    ```
 
 ## Templates Available

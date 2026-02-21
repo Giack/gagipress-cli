@@ -30,11 +30,11 @@ Gagipress CLI automates content generation, scheduling, and analytics for TikTok
 git clone https://github.com/gagipress/gagipress-cli
 cd gagipress-cli
 
-# Build
-go build -o gagipress
+# Build (output in bin/)
+mise exec -- go build -o bin/gagipress
 
 # Install globally (optional)
-sudo mv gagipress /usr/local/bin/
+sudo mv bin/gagipress /usr/local/bin/
 ```
 
 ### Setup
@@ -254,7 +254,7 @@ mise exec -- go test ./internal/parser/... -v
 
 ```bash
 # Build for current platform
-go build -o gagipress
+mise exec -- go build -o bin/gagipress
 
 # Cross-compile for all platforms
 make build-all

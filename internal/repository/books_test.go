@@ -23,10 +23,18 @@ func newTestBooksRepo(handler http.HandlerFunc) *BooksRepository {
 func TestGetBookByIDPrefix_ValidPrefix_FindsUniqueBook(t *testing.T) {
 	book := models.Book{ID: "abcdef12-3456-7890-abcd-ef1234567890", Title: "Test Book", Genre: "Fiction"}
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		// Verify the like filter is used
-		query := r.URL.RawQuery
-		if !strings.Contains(query, "id=like.abcdef12*") {
-			t.Errorf("expected like filter, got query: %s", query)
+		// Verify RPC endpoint is called with POST
+		if r.Method != "POST" {
+			t.Errorf("expected POST method, got %s", r.Method)
+		}
+		if !strings.Contains(r.URL.Path, "/rpc/find_book_by_prefix") {
+			t.Errorf("expected RPC endpoint, got path: %s", r.URL.Path)
+		}
+		// Verify request body contains prefix pattern
+		var reqBody map[string]string
+		json.NewDecoder(r.Body).Decode(&reqBody)
+		if reqBody["prefix_pattern"] != "abcdef12" {
+			t.Errorf("expected prefix_pattern 'abcdef12', got %s", reqBody["prefix_pattern"])
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode([]models.Book{book})

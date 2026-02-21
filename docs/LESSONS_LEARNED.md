@@ -37,7 +37,7 @@
 **Why it worked:**
 - Caught bugs early (found 3 edge cases during writing)
 - Each layer built on tested foundation
-- Quick feedback loop with `go test ./internal/models/...`
+- Quick feedback loop with `mise exec -- go test ./internal/models/...`
 
 **Example:**
 ```go
@@ -196,8 +196,8 @@ func SkipIfNoSupabase(t *testing.T) {
    - Test business logic, not HTTP mechanics
 
 4. **Run subset locally, full suite in CI**
-   - Local: `go test ./internal/...` (fast)
-   - CI: `go test ./...` (comprehensive)
+   - Local: `mise exec -- go test ./internal/...` (fast)
+   - CI: `mise exec -- go test ./...` (comprehensive)
 
 ### For Code Quality
 
@@ -205,7 +205,7 @@ func SkipIfNoSupabase(t *testing.T) {
    - Catch: unused vars, inefficient code, style issues
    - Run in pre-commit hook
 
-2. **Use `go vet`** in pre-commit
+2. **Use `mise exec -- go vet`** in pre-commit
    - Already catches some issues (redundant newlines)
 
 3. **Document complex algorithms in tests**

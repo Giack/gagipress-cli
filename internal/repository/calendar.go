@@ -146,6 +146,7 @@ func (r *CalendarRepository) UpdateEntryStatus(id string, status string) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("apikey", apiKey)
 	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Prefer", "return=representation")
 
 	resp, err := r.client.Do(req)
 	if err != nil {

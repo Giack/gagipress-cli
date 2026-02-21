@@ -214,14 +214,23 @@ func (r *BooksRepository) Update(id string, input *models.BookInput) (*models.Bo
 // GetBookByIDPrefix retrieves a book by ID prefix (minimum 6 characters).
 // Returns the book if exactly one match is found. Returns an error with
 // disambiguation list if multiple books match.
+// Uses the find_book_by_prefix PostgreSQL function via PostgREST RPC.
 func (r *BooksRepository) GetBookByIDPrefix(prefix string) (*models.Book, error) {
 	if len(prefix) < 6 {
 		return nil, fmt.Errorf("ID prefix too short: must be at least 6 characters (got %d)", len(prefix))
 	}
 
-	url := fmt.Sprintf("%s/rest/v1/books?id=like.%s*&select=*", r.config.URL, prefix)
+	// Use PostgreSQL RPC function for UUID prefix matching
+	requestURL := fmt.Sprintf("%s/rest/v1/rpc/find_book_by_prefix", r.config.URL)
 
-	req, err := http.NewRequest("GET", url, nil)
+	// Create request body with prefix parameter
+	reqBody := map[string]string{"prefix_pattern": prefix}
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", requestURL, strings.NewReader(string(jsonBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -231,6 +240,7 @@ func (r *BooksRepository) GetBookByIDPrefix(prefix string) (*models.Book, error)
 		apiKey = r.config.AnonKey
 	}
 
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("apikey", apiKey)
 	req.Header.Set("Authorization", "Bearer "+apiKey)
 
