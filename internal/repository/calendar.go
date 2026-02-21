@@ -123,6 +123,50 @@ func (r *CalendarRepository) GetEntries(status string, limit int) ([]models.Cont
 	return entries, nil
 }
 
+// GetEntryByID gets a specific calendar entry by its ID
+func (r *CalendarRepository) GetEntryByID(id string) (*models.ContentCalendar, error) {
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	url := fmt.Sprintf("%s/rest/v1/content_calendar?id=eq.%s&select=*", r.config.URL, id)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get entry: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get entry: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var entries []models.ContentCalendar
+	if err := json.Unmarshal(body, &entries); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("entry not found: %s", id)
+	}
+
+	return &entries[0], nil
+}
+
 // UpdateEntryStatus updates the status of a calendar entry
 func (r *CalendarRepository) UpdateEntryStatus(id string, status string) error {
 	url := fmt.Sprintf("%s/rest/v1/content_calendar?id=eq.%s", r.config.URL, id)

@@ -279,6 +279,51 @@ func (r *ContentRepository) CreateScript(input *models.ContentScriptInput) (*mod
 	return &scripts[0], nil
 }
 
+// GetScriptByID gets a specific script by its ID
+func (r *ContentRepository) GetScriptByID(id string) (*models.ContentScript, error) {
+	url := fmt.Sprintf("%s/rest/v1/content_scripts?id=eq.%s&select=*", r.config.URL, id)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get script: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get script: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var scripts []models.ContentScript
+	if err := json.Unmarshal(body, &scripts); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	if len(scripts) == 0 {
+		return nil, fmt.Errorf("script not found: %s", id)
+	}
+
+	return &scripts[0], nil
+}
+
 // GetScripts retrieves content scripts
 func (r *ContentRepository) GetScripts(limit int) ([]models.ContentScript, error) {
 	url := fmt.Sprintf("%s/rest/v1/content_scripts?select=*&order=created_at.desc", r.config.URL)
