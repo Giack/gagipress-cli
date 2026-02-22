@@ -28,7 +28,7 @@ func NewSalesRepository(cfg *config.SupabaseConfig) *SalesRepository {
 
 // CreateSale creates a new book sale record
 func (r *SalesRepository) CreateSale(input *models.BookSaleInput) (*models.BookSale, error) {
-	url := fmt.Sprintf("%s/rest/v1/book_sales", r.config.URL)
+	url := fmt.Sprintf("%s/rest/v1/sales_data", r.config.URL)
 
 	jsonData, err := json.Marshal(input)
 	if err != nil {
@@ -79,7 +79,7 @@ func (r *SalesRepository) CreateSale(input *models.BookSaleInput) (*models.BookS
 
 // GetSalesByBook retrieves sales for a specific book
 func (r *SalesRepository) GetSalesByBook(bookID string, from, to time.Time) ([]models.BookSale, error) {
-	url := fmt.Sprintf("%s/rest/v1/book_sales?book_id=eq.%s&order=sale_date.asc", r.config.URL, bookID)
+	url := fmt.Sprintf("%s/rest/v1/sales_data?book_id=eq.%s&order=sale_date.asc", r.config.URL, bookID)
 
 	if !from.IsZero() {
 		url += fmt.Sprintf("&sale_date=gte.%s", from.Format("2006-01-02"))
@@ -126,7 +126,7 @@ func (r *SalesRepository) GetSalesByBook(bookID string, from, to time.Time) ([]m
 
 // GetAllSales retrieves all sales
 func (r *SalesRepository) GetAllSales(from, to time.Time) ([]models.BookSale, error) {
-	url := fmt.Sprintf("%s/rest/v1/book_sales?select=*&order=sale_date.desc", r.config.URL)
+	url := fmt.Sprintf("%s/rest/v1/sales_data?select=*&order=sale_date.desc", r.config.URL)
 
 	if !from.IsZero() {
 		url += fmt.Sprintf("&sale_date=gte.%s", from.Format("2006-01-02"))

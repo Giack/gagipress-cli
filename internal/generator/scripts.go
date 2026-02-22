@@ -43,11 +43,12 @@ type GeneratedScript struct {
 	EstimatedLength int      `json:"estimated_length"`
 }
 
-// GenerateScript generates a complete script from an idea
-func (g *ScriptGenerator) GenerateScript(idea *models.ContentIdea, bookTitle, platform string) (*GeneratedScript, error) {
+// GenerateScript generates a complete script from an idea.
+// amazonURL is the direct Amazon link for the CTA (empty string if no ASIN).
+func (g *ScriptGenerator) GenerateScript(idea *models.ContentIdea, bookTitle, platform, amazonURL string) (*GeneratedScript, error) {
 	// Build prompt
 	ideaDescription := idea.BriefDescription
-	prompt := prompts.ScriptPromptTemplate(ideaDescription, bookTitle, platform)
+	prompt := prompts.ScriptPromptTemplate(ideaDescription, bookTitle, platform, amazonURL)
 
 	var responseText string
 	var err error
@@ -131,15 +132,14 @@ func (g *ScriptGenerator) parseScriptFromResponse(response string) (*GeneratedSc
 }
 
 // SaveScript saves generated script to the database
-func (g *ScriptGenerator) SaveScript(script *GeneratedScript, ideaID string, format string) (*models.ContentScript, error) {
+func (g *ScriptGenerator) SaveScript(script *GeneratedScript, ideaID string) (*models.ContentScript, error) {
 	input := &models.ContentScriptInput{
-		IdeaID:          ideaID,
-		Hook:            script.Hook,
-		MainContent:     script.MainContent,
-		CTA:             script.CTA,
-		Hashtags:        script.Hashtags,
-		EstimatedLength: script.EstimatedLength,
-		Format:          format,
+		IdeaID:            ideaID,
+		Hook:              script.Hook,
+		FullScript:        script.MainContent,
+		CTA:               script.CTA,
+		Hashtags:          script.Hashtags,
+		EstimatedDuration: script.EstimatedLength,
 	}
 
 	if err := input.Validate(); err != nil {

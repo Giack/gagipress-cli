@@ -2,11 +2,12 @@ package stats
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -41,9 +42,6 @@ func runShow(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("📊 Performance Analytics")
-	fmt.Println("════════════════════════")
-
 	// Parse period
 	var from time.Time
 	switch period {
@@ -59,11 +57,13 @@ func runShow(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("invalid period: %s (use 7d, 30d, 90d, or all)", period)
 	}
 
-	fmt.Printf("Period: %s", period)
+	// Header
+	header := "📊 Performance Analytics"
 	if platform != "" {
-		fmt.Printf(" | Platform: %s", platform)
+		header += fmt.Sprintf(" (%s)", platform)
 	}
-	fmt.Println()
+	fmt.Println(ui.StyleHeader.Render(header))
+	fmt.Printf("Period: %s\n\n", period)
 
 	// Get metrics
 	metricsRepo := repository.NewMetricsRepository(&cfg.Supabase)
@@ -78,71 +78,98 @@ func runShow(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	// Create section style
+	sectionStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(ui.ColorMuted).
+		Padding(1, 2).
+		Width(ui.GetTerminalWidth() - 4)
+
 	// Display aggregate metrics
-	fmt.Println("📈 Overview")
-	fmt.Println(strings.Repeat("─", 60))
-	fmt.Printf("Total Posts:          %d\n", agg.TotalPosts)
-	fmt.Printf("Total Views:          %s\n", formatNumber(agg.TotalViews))
-	fmt.Printf("Total Likes:          %s\n", formatNumber(agg.TotalLikes))
-	fmt.Printf("Total Comments:       %s\n", formatNumber(agg.TotalComments))
-	fmt.Printf("Total Shares:         %s\n", formatNumber(agg.TotalShares))
-	fmt.Printf("Avg Engagement Rate:  %.2f%%\n", agg.AvgEngagement)
+	overviewContent := fmt.Sprintf(
+		"Total Posts:          %d\n"+
+			"Total Views:          %s\n"+
+			"Total Likes:          %s\n"+
+			"Total Comments:       %s\n"+
+			"Total Shares:         %s\n"+
+			"Avg Engagement Rate:  %.2f%%",
+		agg.TotalPosts,
+		ui.FormatNumber(agg.TotalViews),
+		ui.FormatNumber(agg.TotalLikes),
+		ui.FormatNumber(agg.TotalComments),
+		ui.FormatNumber(agg.TotalShares),
+		agg.AvgEngagement,
+	)
+
+	fmt.Println(ui.StyleHeader.Render("📈 Overview"))
+	fmt.Println(sectionStyle.Render(overviewContent))
 	fmt.Println()
 
 	// Top performer
 	if agg.TopPost != "" {
-		fmt.Println("🏆 Top Performer")
-		fmt.Println(strings.Repeat("─", 60))
-		fmt.Printf("Post ID:        %s\n", agg.TopPost[:8])
-		fmt.Printf("Engagement:     %.2f%%\n", agg.TopEngagement)
+		topPostID := agg.TopPost
+		if len(topPostID) > 8 {
+			topPostID = topPostID[:8] + "…"
+		}
+
+		topContent := fmt.Sprintf(
+			"Post ID:        %s\n"+
+				"Engagement:     %.2f%%",
+			topPostID,
+			agg.TopEngagement,
+		)
+
+		fmt.Println(ui.StyleHeader.Render("🏆 Top Performer"))
+		fmt.Println(sectionStyle.Render(topContent))
 		fmt.Println()
 	}
 
 	// Platform breakdown
 	if platform == "" {
-		fmt.Println("📱 Platform Breakdown")
-		fmt.Println(strings.Repeat("─", 60))
-
 		// Get TikTok metrics
 		tiktokAgg, _ := metricsRepo.GetAggregateMetrics("tiktok", from, time.Now())
-		fmt.Printf("TikTok:    %d posts | %.2f%% avg engagement\n",
-			tiktokAgg.TotalPosts, tiktokAgg.AvgEngagement)
 
 		// Get Instagram metrics
 		igAgg, _ := metricsRepo.GetAggregateMetrics("instagram", from, time.Now())
-		fmt.Printf("Instagram: %d posts | %.2f%% avg engagement\n",
-			igAgg.TotalPosts, igAgg.AvgEngagement)
+
+		platformContent := fmt.Sprintf(
+			"TikTok:    %d posts | %.2f%% avg engagement\n"+
+				"Instagram: %d posts | %.2f%% avg engagement",
+			tiktokAgg.TotalPosts, tiktokAgg.AvgEngagement,
+			igAgg.TotalPosts, igAgg.AvgEngagement,
+		)
+
+		fmt.Println(ui.StyleHeader.Render("📱 Platform Breakdown"))
+		fmt.Println(sectionStyle.Render(platformContent))
 		fmt.Println()
 	}
 
 	// Insights
-	fmt.Println("💡 Insights")
-	fmt.Println(strings.Repeat("─", 60))
-
 	avgViewsPerPost := 0
 	if agg.TotalPosts > 0 {
 		avgViewsPerPost = agg.TotalViews / agg.TotalPosts
 	}
-	fmt.Printf("• Average views per post: %s\n", formatNumber(avgViewsPerPost))
 
+	var engagementInsight string
 	if agg.AvgEngagement > 5.0 {
-		fmt.Println("• ✅ Excellent engagement rate (>5%)")
+		engagementInsight = ui.StyleSuccess.Render("✅ Excellent engagement rate (>5%)")
 	} else if agg.AvgEngagement > 3.0 {
-		fmt.Println("• ✅ Good engagement rate (3-5%)")
+		engagementInsight = ui.StyleSuccess.Render("✅ Good engagement rate (3-5%)")
 	} else if agg.AvgEngagement > 1.0 {
-		fmt.Println("• ⚠️  Moderate engagement rate (1-3%)")
+		engagementInsight = ui.StyleWarning.Render("⚠️  Moderate engagement rate (1-3%)")
 	} else {
-		fmt.Println("• ⚠️  Low engagement rate (<1%)")
+		engagementInsight = ui.StyleWarning.Render("⚠️  Low engagement rate (<1%)")
 	}
+
+	insightsContent := fmt.Sprintf(
+		"• Average views per post: %s\n"+
+			"• %s",
+		ui.FormatNumber(avgViewsPerPost),
+		engagementInsight,
+	)
+
+	fmt.Println(ui.StyleHeader.Render("💡 Insights"))
+	fmt.Println(sectionStyle.Render(insightsContent))
 
 	return nil
-}
-
-func formatNumber(n int) string {
-	if n >= 1000000 {
-		return fmt.Sprintf("%.1fM", float64(n)/1000000)
-	} else if n >= 1000 {
-		return fmt.Sprintf("%.1fK", float64(n)/1000)
-	}
-	return fmt.Sprintf("%d", n)
 }

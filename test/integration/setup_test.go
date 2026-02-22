@@ -33,3 +33,8 @@ func GetTestSupabaseKey() string {
 func GetTestOpenAIKey() string {
 	return os.Getenv("OPENAI_API_KEY")
 }
+
+// GetTestSupabaseServiceKey returns Supabase service key for testing
+func GetTestSupabaseServiceKey() string {
+	return os.Getenv("SUPABASE_SERVICE_KEY")
+}

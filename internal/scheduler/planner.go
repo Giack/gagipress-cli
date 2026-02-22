@@ -64,7 +64,7 @@ func (p *Planner) PlanWeek(days int, postsPerDay int) ([]*models.ContentCalendar
 
 		// Determine platform based on script characteristics
 		platform := "tiktok"
-		if script.EstimatedLength > 60 {
+		if script.EstimatedDuration > 60 {
 			platform = "instagram" // Longer content for Instagram
 		}
 
@@ -72,6 +72,7 @@ func (p *Planner) PlanWeek(days int, postsPerDay int) ([]*models.ContentCalendar
 			ScriptID:     &script.ID,
 			ScheduledFor: slot.Time,
 			Platform:     platform,
+			PostType:     "reel",
 		}
 
 		calendar = append(calendar, entry)

@@ -87,11 +87,17 @@ func runPlan(cmd *cobra.Command, args []string) error {
 	// Save to database
 	fmt.Print("\n💾 Saving calendar... ")
 
+	calendarRepo := repository.NewCalendarRepository(&cfg.Supabase)
 	savedCount := 0
-	for range calendarEntries {
-		// Create calendar entry
-		// Note: In real implementation, we'd call a CreateCalendar method
-		// For now, we just count them
+	for _, entry := range calendarEntries {
+		if err := entry.Validate(); err != nil {
+			fmt.Printf("\n⚠️  Skipping invalid entry: %v\n", err)
+			continue
+		}
+		if _, err := calendarRepo.CreateEntry(entry); err != nil {
+			fmt.Printf("\n⚠️  Failed to save entry: %v\n", err)
+			continue
+		}
 		savedCount++
 	}
 

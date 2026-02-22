@@ -146,6 +146,7 @@ func (r *ContentRepository) UpdateIdeaStatus(id string, status string) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("apikey", apiKey)
 	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Prefer", "return=representation")
 
 	resp, err := r.client.Do(req)
 	if err != nil {
@@ -163,14 +164,23 @@ func (r *ContentRepository) UpdateIdeaStatus(id string, status string) error {
 
 // GetIdeaByIDPrefix finds a content idea by UUID prefix (minimum 6 characters).
 // Returns an error if the prefix is ambiguous (matches multiple ideas) or not found.
+// Uses the find_idea_by_prefix PostgreSQL function via PostgREST RPC.
 func (r *ContentRepository) GetIdeaByIDPrefix(prefix string) (*models.ContentIdea, error) {
 	if len(prefix) < 6 {
 		return nil, fmt.Errorf("prefix too short: must be at least 6 characters, got %d", len(prefix))
 	}
 
-	url := fmt.Sprintf("%s/rest/v1/content_ideas?select=*&id=like.%s*", r.config.URL, prefix)
+	// Use PostgreSQL RPC function for UUID prefix matching
+	requestURL := fmt.Sprintf("%s/rest/v1/rpc/find_idea_by_prefix", r.config.URL)
 
-	req, err := http.NewRequest("GET", url, nil)
+	// Create request body with prefix parameter
+	reqBody := map[string]string{"prefix_pattern": prefix}
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", requestURL, strings.NewReader(string(jsonBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -180,6 +190,7 @@ func (r *ContentRepository) GetIdeaByIDPrefix(prefix string) (*models.ContentIde
 		apiKey = r.config.AnonKey
 	}
 
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("apikey", apiKey)
 	req.Header.Set("Authorization", "Bearer "+apiKey)
 
@@ -268,9 +279,54 @@ func (r *ContentRepository) CreateScript(input *models.ContentScriptInput) (*mod
 	return &scripts[0], nil
 }
 
+// GetScriptByID gets a specific script by its ID
+func (r *ContentRepository) GetScriptByID(id string) (*models.ContentScript, error) {
+	url := fmt.Sprintf("%s/rest/v1/content_scripts?id=eq.%s&select=*", r.config.URL, id)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get script: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get script: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var scripts []models.ContentScript
+	if err := json.Unmarshal(body, &scripts); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	if len(scripts) == 0 {
+		return nil, fmt.Errorf("script not found: %s", id)
+	}
+
+	return &scripts[0], nil
+}
+
 // GetScripts retrieves content scripts
 func (r *ContentRepository) GetScripts(limit int) ([]models.ContentScript, error) {
-	url := fmt.Sprintf("%s/rest/v1/content_scripts?select=*&order=scripted_at.desc", r.config.URL)
+	url := fmt.Sprintf("%s/rest/v1/content_scripts?select=*&order=created_at.desc", r.config.URL)
 
 	if limit > 0 {
 		url += fmt.Sprintf("&limit=%d", limit)

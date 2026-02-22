@@ -6,9 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gagipress/gagipress-cli/internal/config"
 	"github.com/gagipress/gagipress-cli/internal/models"
 	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -45,8 +47,8 @@ func runCorrelate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("🔗 Social → Sales Correlation Analysis")
-	fmt.Println("═══════════════════════════════════════")
+	fmt.Println(ui.StyleHeader.Render("🔗 Social → Sales Correlation Analysis"))
+	fmt.Println()
 
 	// Get book info
 	booksRepo := repository.NewBooksRepository(&cfg.Supabase)
@@ -100,69 +102,94 @@ func runCorrelate(cmd *cobra.Command, args []string) error {
 	// Calculate correlation
 	correlation := calculateCorrelation(dailyData)
 
+	// Create section style
+	sectionStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(ui.ColorMuted).
+		Padding(1, 2).
+		Width(ui.GetTerminalWidth() - 4)
+
 	// Display results
-	fmt.Println("📊 Correlation Results")
-	fmt.Println(strings.Repeat("─", 60))
-	fmt.Printf("Data points:          %d days\n", len(dailyData))
-	fmt.Printf("Total views:          %s\n", formatNumber(sumViews(dailyData)))
-	fmt.Printf("Total sales:          %d units\n", sumSales(dailyData))
-	fmt.Printf("Correlation (r):      %.3f\n", correlation)
+	resultsContent := fmt.Sprintf(
+		"Data points:          %d days\n"+
+			"Total views:          %s\n"+
+			"Total sales:          %d units\n"+
+			"Correlation (r):      %.3f %s",
+		len(dailyData),
+		ui.FormatNumber(sumViews(dailyData)),
+		sumSales(dailyData),
+		correlation,
+		renderCorrelationBar(correlation),
+	)
+
+	fmt.Println(ui.StyleHeader.Render("📊 Correlation Results"))
+	fmt.Println(sectionStyle.Render(resultsContent))
 	fmt.Println()
 
 	// Interpret correlation
-	fmt.Println("📈 Interpretation")
-	fmt.Println(strings.Repeat("─", 60))
-
 	absCorr := math.Abs(correlation)
 	var strength string
 	var interpretation string
+	var strengthStyle lipgloss.Style
 
 	if absCorr >= 0.7 {
 		strength = "Strong"
 		interpretation = "Social media activity has a strong relationship with sales"
+		strengthStyle = ui.StyleSuccess
 	} else if absCorr >= 0.4 {
 		strength = "Moderate"
 		interpretation = "Social media activity has a moderate relationship with sales"
+		strengthStyle = ui.StyleWarning
 	} else if absCorr >= 0.2 {
 		strength = "Weak"
 		interpretation = "Social media activity has a weak relationship with sales"
+		strengthStyle = ui.StyleMuted
 	} else {
 		strength = "Very Weak / None"
 		interpretation = "Little to no relationship detected between social media and sales"
+		strengthStyle = ui.StyleMuted
 	}
 
+	var directionText string
 	if correlation > 0 {
-		fmt.Printf("Strength:   %s positive correlation\n", strength)
-		fmt.Printf("Direction:  📈 Positive (more views → more sales)\n")
+		directionText = fmt.Sprintf("Strength:   %s positive correlation\n"+
+			"Direction:  📈 Positive (more views → more sales)",
+			strengthStyle.Render(strength))
 	} else {
-		fmt.Printf("Strength:   %s negative correlation\n", strength)
-		fmt.Printf("Direction:  📉 Negative (more views → fewer sales)\n")
+		directionText = fmt.Sprintf("Strength:   %s negative correlation\n"+
+			"Direction:  📉 Negative (more views → fewer sales)",
+			strengthStyle.Render(strength))
 	}
-	fmt.Printf("\n%s\n", interpretation)
+
+	interpretContent := fmt.Sprintf("%s\n\n%s", directionText, interpretation)
+
+	fmt.Println(ui.StyleHeader.Render("📈 Interpretation"))
+	fmt.Println(sectionStyle.Render(interpretContent))
 	fmt.Println()
 
 	// Recommendations
-	fmt.Println("💡 Recommendations")
-	fmt.Println(strings.Repeat("─", 60))
-
+	var recsContent string
 	if correlation > 0.4 {
-		fmt.Println("✅ Social media is driving sales! Keep posting consistently.")
-		fmt.Println("   • Focus on content types with highest engagement")
-		fmt.Println("   • Increase posting frequency during peak days")
-		fmt.Println("   • Use top-performing content as templates")
+		recsContent = ui.StyleSuccess.Render("✅ Social media is driving sales! Keep posting consistently.") + "\n" +
+			"   • Focus on content types with highest engagement\n" +
+			"   • Increase posting frequency during peak days\n" +
+			"   • Use top-performing content as templates"
 	} else if correlation > 0.1 {
-		fmt.Println("⚠️  Moderate impact. Consider:")
-		fmt.Println("   • Stronger CTAs in your posts")
-		fmt.Println("   • More direct product mentions")
-		fmt.Println("   • Test different content types")
-		fmt.Println("   • Add Amazon link in bio")
+		recsContent = ui.StyleWarning.Render("⚠️  Moderate impact. Consider:") + "\n" +
+			"   • Stronger CTAs in your posts\n" +
+			"   • More direct product mentions\n" +
+			"   • Test different content types\n" +
+			"   • Add Amazon link in bio"
 	} else {
-		fmt.Println("ℹ️  Low correlation detected. Possible reasons:")
-		fmt.Println("   • Need more data (try 60-90 days)")
-		fmt.Println("   • Delayed conversion effect")
-		fmt.Println("   • Content not targeted enough")
-		fmt.Println("   • Audience mismatch")
+		recsContent = ui.StyleMuted.Render("ℹ️  Low correlation detected. Possible reasons:") + "\n" +
+			"   • Need more data (try 60-90 days)\n" +
+			"   • Delayed conversion effect\n" +
+			"   • Content not targeted enough\n" +
+			"   • Audience mismatch"
 	}
+
+	fmt.Println(ui.StyleHeader.Render("💡 Recommendations"))
+	fmt.Println(sectionStyle.Render(recsContent))
 
 	return nil
 }
@@ -252,4 +279,24 @@ func sumSales(data []models.CorrelationPoint) int {
 		total += p.UnitsSold
 	}
 	return total
+}
+
+// renderCorrelationBar creates a visual bar showing correlation strength
+func renderCorrelationBar(r float64) string {
+	absR := math.Abs(r)
+	strength := int(absR * 10)
+	if strength > 10 {
+		strength = 10
+	}
+
+	bar := strings.Repeat("█", strength) + strings.Repeat("░", 10-strength)
+
+	color := ui.ColorMuted
+	if absR > 0.7 {
+		color = ui.ColorSuccess
+	} else if absR > 0.4 {
+		color = ui.ColorWarning
+	}
+
+	return lipgloss.NewStyle().Foreground(color).Render(bar)
 }

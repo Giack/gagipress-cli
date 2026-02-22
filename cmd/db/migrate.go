@@ -89,7 +89,7 @@ func runMigrate() error {
 	}
 
 	fmt.Println("✅ Migrations synced")
-	fmt.Println("\n🚀 Running Supabase CLI migration...\n")
+	fmt.Println("\n🚀 Running Supabase CLI migration...")
 
 	// Use Supabase CLI to apply migrations
 	cmd := exec.Command("supabase", "db", "push", "--yes")

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
@@ -58,10 +59,12 @@ func TestGetIdeaByIDPrefix_SingleMatch(t *testing.T) {
 	fullID := "abcdef12-3456-7890-abcd-ef1234567890"
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Verify the query uses like filter
-		query := r.URL.Query().Get("id")
-		if query == "" {
-			t.Error("expected id query parameter")
+		// Verify RPC endpoint is called with POST
+		if r.Method != "POST" {
+			t.Errorf("expected POST method, got %s", r.Method)
+		}
+		if !strings.Contains(r.URL.Path, "/rpc/find_idea_by_prefix") {
+			t.Errorf("expected RPC endpoint, got path: %s", r.URL.Path)
 		}
 
 		w.Header().Set("Content-Type", "application/json")

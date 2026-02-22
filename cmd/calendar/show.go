@@ -2,10 +2,12 @@ package calendar
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
+	"github.com/gagipress/gagipress-cli/internal/models"
+	"github.com/gagipress/gagipress-cli/internal/repository"
+	"github.com/gagipress/gagipress-cli/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -28,36 +30,23 @@ func init() {
 
 func runShow(cmd *cobra.Command, args []string) error {
 	// Load configuration
-	_, err := config.Load()
+	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	fmt.Println("📅 Content Calendar")
-	fmt.Println("═══════════════════")
-
-	// Get calendar entries
-	// Note: We'd need to add a GetCalendar method to the repository
-	// For now, we'll show a placeholder
-
-	fmt.Printf("Showing schedule for next %d days", daysAhead)
+	header := "📅 Content Calendar"
 	if statusFilter != "" {
-		fmt.Printf(" (status: %s)", statusFilter)
+		header += fmt.Sprintf(" (%s)", statusFilter)
 	}
-	fmt.Println()
+	fmt.Println(ui.StyleHeader.Render(header))
+	fmt.Printf("Showing schedule for next %d days\n\n", daysAhead)
 
-	// Placeholder data structure
-	type CalendarEntry struct {
-		ID           string
-		ScheduledFor time.Time
-		Platform     string
-		Status       string
-		ScriptID     string
-	}
-
-	// In real implementation, fetch from database
-	entries := []CalendarEntry{
-		// Placeholder - would come from repository.GetCalendar()
+	// Get calendar entries from database
+	calendarRepo := repository.NewCalendarRepository(&cfg.Supabase)
+	entries, err := calendarRepo.GetEntries(statusFilter, 0)
+	if err != nil {
+		return fmt.Errorf("failed to get calendar entries: %w", err)
 	}
 
 	if len(entries) == 0 {
@@ -67,35 +56,52 @@ func runShow(cmd *cobra.Command, args []string) error {
 	}
 
 	// Group by date
-	byDate := make(map[string][]CalendarEntry)
+	byDate := make(map[string][]models.ContentCalendar)
 	for _, entry := range entries {
 		dateKey := entry.ScheduledFor.Format("2006-01-02")
 		byDate[dateKey] = append(byDate[dateKey], entry)
 	}
 
 	// Display calendar
+	currentDate := ""
 	for date, dayEntries := range byDate {
 		parsedDate, _ := time.Parse("2006-01-02", date)
-		fmt.Printf("📆 %s\n", parsedDate.Format("Monday, January 2, 2006"))
-		fmt.Println(strings.Repeat("─", 70))
+
+		if date != currentDate {
+			currentDate = date
+			dateHeader := ui.StyleHeader.Render(
+				"📆 " + parsedDate.Format("Monday, January 2, 2006"),
+			)
+			fmt.Println(dateHeader)
+		}
 
 		for _, entry := range dayEntries {
-			statusEmoji := "⏳"
+			// Format status with color
+			var status string
 			switch entry.Status {
+			case "pending_approval":
+				status = ui.FormatStatus("pending")
 			case "approved":
-				statusEmoji = "✅"
+				status = ui.FormatStatus("approved")
 			case "published":
-				statusEmoji = "🎉"
+				status = ui.StyleSuccess.Render("published")
 			case "failed":
-				statusEmoji = "❌"
+				status = ui.StyleError.Render("failed")
+			default:
+				status = entry.Status
 			}
 
-			fmt.Printf("%s %s | %-10s | %-18s | %s\n",
-				statusEmoji,
-				entry.ScheduledFor.Format("15:04"),
+			time := ui.StyleMuted.Render(entry.ScheduledFor.Format("15:04"))
+			entryID := entry.ID
+			if len(entryID) > 8 {
+				entryID = entryID[:8] + "…"
+			}
+
+			fmt.Printf("  %s | %s | %s | %s\n",
+				time,
 				entry.Platform,
-				entry.Status,
-				entry.ID[:8],
+				status,
+				entryID,
 			)
 		}
 		fmt.Println()
@@ -118,12 +124,17 @@ func runShow(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	fmt.Println(strings.Repeat("═", 70))
-	fmt.Printf("Total: %d posts | Pending: %d | Approved: %d | Published: %d\n",
-		total, pending, approved, published)
+	fmt.Println(ui.StyleHeader.Render("Summary"))
+	summaryText := fmt.Sprintf("Total: %d posts | Pending: %s | Approved: %s | Published: %s",
+		total,
+		ui.StyleWarning.Render(fmt.Sprintf("%d", pending)),
+		ui.StyleSuccess.Render(fmt.Sprintf("%d", approved)),
+		ui.StyleSuccess.Render(fmt.Sprintf("%d", published)),
+	)
+	fmt.Println(summaryText)
 
 	if pending > 0 {
-		fmt.Println("\n💡 Use 'gagipress calendar approve' to approve pending posts")
+		fmt.Printf("\n%s\n", ui.StyleMuted.Render("💡 Use 'gagipress calendar approve' to approve pending posts"))
 	}
 
 	return nil

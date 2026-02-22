@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	platform       string
+	platform        string
 	scriptUseGemini bool
 )
 
@@ -89,10 +89,16 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	// Get book info
 	bookTitle := "Your Book" // default
+	amazonURL := ""
 	if idea.BookID != nil {
 		book, err := booksRepo.GetByID(*idea.BookID)
 		if err == nil {
 			bookTitle = book.Title
+			if book.KDPASIN != "" {
+				// Build Amazon URL with UTM tracking parameters
+				amazonURL = fmt.Sprintf("https://www.amazon.it/dp/%s?tag=gagipress-21&utm_source=%s&utm_medium=social&utm_campaign=%s",
+					book.KDPASIN, platform, idea.ID)
+			}
 		}
 	}
 
@@ -101,7 +107,7 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	spinner := ui.NewSpinner("Generating script with AI...")
 	spinner.Start()
-	script, err := gen.GenerateScript(idea, bookTitle, platform)
+	script, err := gen.GenerateScript(idea, bookTitle, platform, amazonURL)
 	spinner.Stop()
 
 	if err != nil {
@@ -149,12 +155,7 @@ func runGenerateScript(cmd *cobra.Command, args []string) error {
 
 	// Save to database
 	fmt.Print("\n💾 Saving script... ")
-	format := "vertical"
-	if platform == "instagram" && script.EstimatedLength > 60 {
-		format = "square" // might want square for longer Instagram content
-	}
-
-	savedScript, err := gen.SaveScript(script, idea.ID, format)
+	savedScript, err := gen.SaveScript(script, idea.ID)
 	if err != nil {
 		fmt.Println("❌ FAILED")
 		return fmt.Errorf("failed to save script: %w", err)

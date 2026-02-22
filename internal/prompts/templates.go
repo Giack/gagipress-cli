@@ -101,8 +101,10 @@ Formato risposta (JSON array):
 	return baseContext + "\n" + nicheGuidelines + "\n" + categories
 }
 
-// ScriptPromptTemplate generates a prompt for script generation from an idea
-func ScriptPromptTemplate(idea, bookTitle, platform string) string {
+// ScriptPromptTemplate generates a prompt for script generation from an idea.
+// amazonURL is the direct Amazon product link (e.g. https://www.amazon.it/dp/B0XXXXX).
+// Pass an empty string if the book has no ASIN set.
+func ScriptPromptTemplate(idea, bookTitle, platform, amazonURL string) string {
 	platformSpecs := ""
 
 	if platform == "tiktok" {
@@ -152,7 +154,8 @@ La frase/domanda che ferma lo scroll. Deve essere:
 **CTA (5-10 secondi)**
 - Invito all'azione chiaro
 - Perché dovrebbero comprare il libro
-- Dove trovarlo (link in bio)
+- Link diretto: %s
+- Menziona sia "link in bio" sia il link Amazon diretto
 
 **EXTRA**
 - 5-8 hashtag strategici
@@ -168,7 +171,7 @@ Formato risposta (JSON):
   "music_suggestion": "Nome traccia/audio trending",
   "video_notes": "Note per editing e montaggio",
   "estimated_length": 45
-}`, idea, bookTitle, platform, platformSpecs)
+}`, idea, bookTitle, platform, platformSpecs, amazonURL)
 }
 
 // CalculateRelevanceScore calculates a relevance score for an idea
