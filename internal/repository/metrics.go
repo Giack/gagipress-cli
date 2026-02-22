@@ -99,10 +99,10 @@ func (r *MetricsRepository) GetMetrics(platform string, from, to time.Time) ([]m
 		url += fmt.Sprintf("&platform=eq.%s", platform)
 	}
 	if !from.IsZero() {
-		url += fmt.Sprintf("&collected_at=gte.%s", from.Format(time.RFC3339))
+		url += fmt.Sprintf("&collected_at=gte.%s", from.UTC().Format(time.RFC3339))
 	}
 	if !to.IsZero() {
-		url += fmt.Sprintf("&collected_at=lte.%s", to.Format(time.RFC3339))
+		url += fmt.Sprintf("&collected_at=lte.%s", to.UTC().Format(time.RFC3339))
 	}
 
 	req, err := http.NewRequest("GET", url, nil)

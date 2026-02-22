@@ -25,9 +25,6 @@ For each pending entry, you can:
 	RunE: runApprove,
 }
 
-func init() {
-	CalendarCmd.AddCommand(approveCmd)
-}
 
 func runApprove(cmd *cobra.Command, args []string) error {
 	// Load configuration
