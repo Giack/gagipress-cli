@@ -169,7 +169,8 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 
 		var imageBytes []byte
 
-		// Path A: multimodal generation with book cover as visual reference
+		// Path A: multimodal generation with book cover as visual reference.
+		// Falls through to Path B on any error (model not available, no image returned).
 		coverBytes, coverMIME, _ := fetchCoverImage(book)
 		if coverBytes != nil {
 			contents := []*genai.Content{
@@ -186,32 +187,28 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 					ResponseModalities: []string{"IMAGE", "TEXT"},
 				},
 			)
-			if err != nil {
-				fmt.Printf("FAILED (gemini multimodal): %v\n", err)
-				failed++
-				continue
-			}
-			// Extract image bytes from the first candidate
-			for _, cand := range genResp.Candidates {
-				if cand.Content == nil {
-					continue
-				}
-				for _, part := range cand.Content.Parts {
-					if part.InlineData != nil {
-						imageBytes = part.InlineData.Data
+			if err == nil {
+				for _, cand := range genResp.Candidates {
+					if cand.Content == nil {
+						continue
+					}
+					for _, part := range cand.Content.Parts {
+						if part.InlineData != nil {
+							imageBytes = part.InlineData.Data
+							break
+						}
+					}
+					if imageBytes != nil {
 						break
 					}
 				}
-				if imageBytes != nil {
-					break
-				}
 			}
-			if imageBytes == nil {
-				fmt.Println("FAILED (no image in gemini response)")
-				failed++
-				continue
+			if err != nil || imageBytes == nil {
+				fmt.Print("(gemini unavailable, falling back to Imagen) ")
 			}
-		} else {
+		}
+
+		if imageBytes == nil {
 			// Path B: text-only Imagen generation
 			response, err := genaiClient.Models.GenerateImages(
 				ctx,
@@ -239,6 +236,15 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 
 		fileName := fmt.Sprintf("%s.jpg", entry.ID)
 		uploadURL := fmt.Sprintf("%s/storage/v1/object/campaign-media/%s", cfg.Supabase.URL, fileName)
+
+		// Delete existing file first to allow fresh upload without needing UPDATE RLS policy.
+		delReq, _ := http.NewRequestWithContext(ctx, "DELETE", uploadURL, nil)
+		delReq.Header.Set("Authorization", "Bearer "+supabaseServiceKey)
+		delReq.Header.Set("apikey", supabaseServiceKey)
+		delResp, _ := httpClient.Do(delReq)
+		if delResp != nil {
+			delResp.Body.Close()
+		}
 
 		uploadReq, err := http.NewRequestWithContext(ctx, "POST", uploadURL, bytes.NewReader(imageBytes))
 		if err != nil {
