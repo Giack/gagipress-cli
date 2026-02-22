@@ -303,7 +303,7 @@ func (r *CalendarRepository) RetryFailed() (int, error) {
 // and no media_url set yet, joined with their script data for prompt building.
 func (r *CalendarRepository) GetEntriesNeedingMedia() ([]models.ContentCalendarWithScript, error) {
 	url := fmt.Sprintf(
-		"%s/rest/v1/content_calendar?status=in.(approved,scheduled)&generate_media=eq.true&media_url=is.null&select=*,content_scripts(*)",
+		"%s/rest/v1/content_calendar?status=in.(approved,scheduled)&generate_media=eq.true&media_url=is.null&select=*,content_scripts(*,content_ideas(*,books(*)))",
 		r.config.URL,
 	)
 

@@ -15,6 +15,42 @@ import (
 	"google.golang.org/genai"
 )
 
+// fetchCoverImage downloads the book cover image.
+// Tries cover_image_url first, then builds an Amazon URL from KDPASIN.
+// Returns nil bytes (no error) if no URL is available or download fails.
+func fetchCoverImage(book *models.Book) ([]byte, string, error) {
+	if book == nil {
+		return nil, "", nil
+	}
+	url := book.CoverImageURL
+	if url == "" && book.KDPASIN != "" {
+		url = fmt.Sprintf(
+			"https://images-na.ssl-images-amazon.com/images/P/%s.01._SCLZZZZZZZ_.jpg",
+			book.KDPASIN,
+		)
+	}
+	if url == "" {
+		return nil, "", nil
+	}
+	resp, err := http.Get(url) //nolint:gosec
+	if err != nil {
+		return nil, "", nil // non-fatal: fall back to text-only generation
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, "", nil
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, "", nil
+	}
+	mimeType := resp.Header.Get("Content-Type")
+	if mimeType == "" {
+		mimeType = "image/jpeg"
+	}
+	return data, mimeType, nil
+}
+
 var generateMediaCmd = &cobra.Command{
 	Use:   "generate-media",
 	Short: "Generate images for scheduled posts using Google Imagen",
@@ -86,10 +122,14 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 		fmt.Println("\n[dry-run] Would generate images for:")
 		for _, e := range entries {
 			hook := ""
+			bookTitle := "(no book)"
 			if e.Script != nil {
 				hook = e.Script.Hook
+				if e.Script.Idea != nil && e.Script.Idea.Book != nil {
+					bookTitle = e.Script.Idea.Book.Title
+				}
 			}
-			fmt.Printf("  - %s (%s) hook: %q\n", e.ID, e.Platform, hook)
+			fmt.Printf("  - %s (%s) book: %q hook: %q\n", e.ID, e.Platform, bookTitle, hook)
 		}
 		return nil
 	}
@@ -113,33 +153,89 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 	failed := 0
 
 	for _, entry := range entries {
-		prompt := buildImagePrompt(entry.Platform, entry.Script)
-
-		fmt.Printf("Generating image for entry %s (%s)... ", entry.ID[:8], entry.Platform)
-
-		response, err := genaiClient.Models.GenerateImages(
-			ctx,
-			"imagen-4.0-generate-001",
-			prompt,
-			&genai.GenerateImagesConfig{
-				NumberOfImages: 1,
-				AspectRatio:    "9:16",
-				OutputMIMEType: "image/jpeg",
-			},
-		)
-		if err != nil {
-			fmt.Printf("FAILED (imagen): %v\n", err)
-			failed++
-			continue
+		// Extract book from the nested join chain
+		var book *models.Book
+		if entry.Script != nil && entry.Script.Idea != nil {
+			book = entry.Script.Idea.Book
 		}
 
-		if len(response.GeneratedImages) == 0 {
-			fmt.Println("FAILED (no images returned)")
-			failed++
-			continue
+		bookTitle := "(no book)"
+		if book != nil {
+			bookTitle = book.Title
 		}
+		fmt.Printf("Generating image for entry %s (%s) book: %q... ", entry.ID[:8], entry.Platform, bookTitle)
 
-		imageBytes := response.GeneratedImages[0].Image.ImageBytes
+		prompt := buildImagePrompt(entry.Platform, entry.Script, book)
+
+		var imageBytes []byte
+
+		// Path A: multimodal generation with book cover as visual reference
+		coverBytes, coverMIME, _ := fetchCoverImage(book)
+		if coverBytes != nil {
+			contents := []*genai.Content{
+				genai.NewContentFromParts([]*genai.Part{
+					genai.NewPartFromText(prompt),
+					genai.NewPartFromBytes(coverBytes, coverMIME),
+				}, genai.RoleUser),
+			}
+			genResp, err := genaiClient.Models.GenerateContent(
+				ctx,
+				"gemini-2.5-flash-preview-image-generation",
+				contents,
+				&genai.GenerateContentConfig{
+					ResponseModalities: []string{"IMAGE", "TEXT"},
+				},
+			)
+			if err != nil {
+				fmt.Printf("FAILED (gemini multimodal): %v\n", err)
+				failed++
+				continue
+			}
+			// Extract image bytes from the first candidate
+			for _, cand := range genResp.Candidates {
+				if cand.Content == nil {
+					continue
+				}
+				for _, part := range cand.Content.Parts {
+					if part.InlineData != nil {
+						imageBytes = part.InlineData.Data
+						break
+					}
+				}
+				if imageBytes != nil {
+					break
+				}
+			}
+			if imageBytes == nil {
+				fmt.Println("FAILED (no image in gemini response)")
+				failed++
+				continue
+			}
+		} else {
+			// Path B: text-only Imagen generation
+			response, err := genaiClient.Models.GenerateImages(
+				ctx,
+				"imagen-4.0-generate-001",
+				prompt,
+				&genai.GenerateImagesConfig{
+					NumberOfImages: 1,
+					AspectRatio:    "9:16",
+					OutputMIMEType: "image/jpeg",
+				},
+			)
+			if err != nil {
+				fmt.Printf("FAILED (imagen): %v\n", err)
+				failed++
+				continue
+			}
+
+			if len(response.GeneratedImages) == 0 {
+				fmt.Println("FAILED (no images returned)")
+				failed++
+				continue
+			}
+			imageBytes = response.GeneratedImages[0].Image.ImageBytes
+		}
 
 		fileName := fmt.Sprintf("%s.jpg", entry.ID)
 		uploadURL := fmt.Sprintf("%s/storage/v1/object/campaign-media/%s", cfg.Supabase.URL, fileName)
@@ -187,7 +283,7 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func buildImagePrompt(platform string, script *models.ContentScript) string {
+func buildImagePrompt(platform string, script *models.ContentScriptWithIdea, book *models.Book) string {
 	platformDesc := "TikTok/Instagram Reels"
 	if platform == "instagram" {
 		platformDesc = "Instagram Reels"
@@ -200,10 +296,41 @@ func buildImagePrompt(platform string, script *models.ContentScript) string {
 		hook = " Hook concept: " + script.Hook + "."
 	}
 
+	bookDesc := "a children's book"
+	if book != nil {
+		parts := []string{}
+		if book.Title != "" {
+			parts = append(parts, fmt.Sprintf("'%s'", book.Title))
+		}
+		if book.Genre != "" {
+			parts = append(parts, "a "+book.Genre+" book")
+		}
+		if book.TargetAudience != "" {
+			parts = append(parts, "for "+book.TargetAudience)
+		}
+		if len(parts) > 0 {
+			bookDesc = ""
+			for i, p := range parts {
+				if i > 0 {
+					bookDesc += " "
+				}
+				bookDesc += p
+			}
+		}
+	}
+
+	if book != nil && (book.CoverImageURL != "" || book.KDPASIN != "") {
+		return fmt.Sprintf(
+			"Create a vertical 9:16 promotional image INSPIRED BY the attached book cover for %s — %s post.%s "+
+				"Match the visual style, color palette, and mood of the cover. "+
+				"Style: engaging, colorful, warm. No text overlay. Bright background, playful composition.",
+			bookDesc, platformDesc, hook,
+		)
+	}
+
 	return fmt.Sprintf(
-		"Create a vertical promotional image for a children's book %s post.%s "+
-			"Style: engaging, colorful, warm, suitable for children's book promotion. "+
-			"No text overlay. Bright background, playful composition.",
-		platformDesc, hook,
+		"Create a vertical 9:16 promotional image for %s — %s post.%s "+
+			"Style: engaging, colorful, warm. No text overlay. Bright background, playful composition.",
+		bookDesc, platformDesc, hook,
 	)
 }

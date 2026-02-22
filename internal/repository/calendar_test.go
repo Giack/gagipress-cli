@@ -60,7 +60,9 @@ func TestGetStatusCounts(t *testing.T) {
 // TestGetEntriesNeedingMedia verifies that the correct query is sent and results are parsed.
 func TestGetEntriesNeedingMedia(t *testing.T) {
 	hook := "Did you know this book exists?"
-	script := models.ContentScript{ID: "script-1", Hook: hook}
+	book := models.Book{ID: "book-1", Title: "My Book", Genre: "children", KDPASIN: "B0ABC123"}
+	idea := models.ContentIdeaWithBook{ContentIdea: models.ContentIdea{ID: "idea-1"}, Book: &book}
+	script := models.ContentScriptWithIdea{ContentScript: models.ContentScript{ID: "script-1", Hook: hook}, Idea: &idea}
 	entries := []models.ContentCalendarWithScript{
 		{
 			ContentCalendar: models.ContentCalendar{

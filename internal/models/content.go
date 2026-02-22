@@ -99,11 +99,23 @@ type ContentCalendar struct {
 	MediaURL      *string    `json:"media_url,omitempty"`
 }
 
-// ContentCalendarWithScript is a calendar entry joined with its script data.
-// Used by GetEntriesNeedingMedia to build Imagen prompts.
+// ContentIdeaWithBook is a ContentIdea with its associated book.
+type ContentIdeaWithBook struct {
+	ContentIdea
+	Book *Book `json:"books,omitempty"`
+}
+
+// ContentScriptWithIdea is a ContentScript with its associated idea (and book).
+type ContentScriptWithIdea struct {
+	ContentScript
+	Idea *ContentIdeaWithBook `json:"content_ideas,omitempty"`
+}
+
+// ContentCalendarWithScript is a calendar entry joined with its script data,
+// including the idea and book via deep join.
 type ContentCalendarWithScript struct {
 	ContentCalendar
-	Script *ContentScript `json:"content_scripts,omitempty"`
+	Script *ContentScriptWithIdea `json:"content_scripts,omitempty"`
 }
 
 // ContentCalendarInput represents input for creating a calendar entry
