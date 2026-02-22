@@ -206,6 +206,99 @@ func (r *CalendarRepository) UpdateEntryStatus(id string, status string) error {
 	return nil
 }
 
+// GetStatusCounts returns a count of calendar entries grouped by status.
+func (r *CalendarRepository) GetStatusCounts() (map[string]int, error) {
+	url := fmt.Sprintf("%s/rest/v1/content_calendar?select=status", r.config.URL)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get status counts: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get status counts: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var rows []map[string]string
+	if err := json.Unmarshal(body, &rows); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	counts := make(map[string]int)
+	for _, row := range rows {
+		counts[row["status"]]++
+	}
+	return counts, nil
+}
+
+// RetryFailed resets all calendar entries with status 'failed' back to 'approved'
+// so the cron job will pick them up again. Returns the number of entries reset.
+func (r *CalendarRepository) RetryFailed() (int, error) {
+	url := fmt.Sprintf("%s/rest/v1/content_calendar?status=eq.failed", r.config.URL)
+
+	data := map[string]string{"status": "approved"}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal data: %w", err)
+	}
+
+	req, err := http.NewRequest("PATCH", url, strings.NewReader(string(jsonData)))
+	if err != nil {
+		return 0, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Prefer", "return=representation")
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return 0, fmt.Errorf("failed to retry failed entries: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
+		return 0, fmt.Errorf("failed to retry entries: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var updated []models.ContentCalendar
+	if err := json.Unmarshal(body, &updated); err != nil {
+		return 0, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	return len(updated), nil
+}
+
 // DeleteEntry deletes a calendar entry
 func (r *CalendarRepository) DeleteEntry(id string) error {
 	url := fmt.Sprintf("%s/rest/v1/content_calendar?id=eq.%s", r.config.URL, id)

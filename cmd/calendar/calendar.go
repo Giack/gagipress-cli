@@ -19,4 +19,6 @@ func init() {
 	CalendarCmd.AddCommand(planCmd)
 	CalendarCmd.AddCommand(showCmd)
 	CalendarCmd.AddCommand(approveCmd)
+	CalendarCmd.AddCommand(statusCmd)
+	CalendarCmd.AddCommand(retryCmd)
 }
