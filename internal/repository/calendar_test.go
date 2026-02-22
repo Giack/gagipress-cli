@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gagipress/gagipress-cli/internal/config"
@@ -53,6 +54,85 @@ func TestGetStatusCounts(t *testing.T) {
 	// Verify only the status column is requested (keep payload small)
 	if capturedPath == "" {
 		t.Error("expected a URL query string, got empty")
+	}
+}
+
+// TestGetEntriesNeedingMedia verifies that the correct query is sent and results are parsed.
+func TestGetEntriesNeedingMedia(t *testing.T) {
+	hook := "Did you know this book exists?"
+	script := models.ContentScript{ID: "script-1", Hook: hook}
+	entries := []models.ContentCalendarWithScript{
+		{
+			ContentCalendar: models.ContentCalendar{
+				ID:            "entry-1",
+				Status:        "approved",
+				Platform:      "tiktok",
+				PostType:      "reel",
+				GenerateMedia: true,
+			},
+			Script: &script,
+		},
+	}
+
+	var capturedQuery string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capturedQuery = r.URL.RawQuery
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(entries)
+	}))
+	defer server.Close()
+
+	repo := NewCalendarRepository(&config.SupabaseConfig{URL: server.URL, AnonKey: "test"})
+
+	result, err := repo.GetEntriesNeedingMedia()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(result) != 1 {
+		t.Fatalf("expected 1 entry, got %d", len(result))
+	}
+	if result[0].ID != "entry-1" {
+		t.Errorf("expected ID entry-1, got %s", result[0].ID)
+	}
+	// Query must filter by generate_media=true and media_url=is.null
+	if !strings.Contains(capturedQuery, "generate_media=eq.true") {
+		t.Errorf("query missing generate_media filter, got: %s", capturedQuery)
+	}
+	if !strings.Contains(capturedQuery, "media_url=is.null") {
+		t.Errorf("query missing media_url=is.null filter, got: %s", capturedQuery)
+	}
+}
+
+// TestUpdateMediaURL verifies that UpdateMediaURL sends the correct PATCH request.
+func TestUpdateMediaURL(t *testing.T) {
+	var capturedMethod, capturedQuery string
+	var capturedBody map[string]string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capturedMethod = r.Method
+		capturedQuery = r.URL.RawQuery
+		json.NewDecoder(r.Body).Decode(&capturedBody)
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	repo := NewCalendarRepository(&config.SupabaseConfig{URL: server.URL, AnonKey: "test"})
+
+	err := repo.UpdateMediaURL("entry-42", "https://example.com/image.jpg")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if capturedMethod != http.MethodPatch {
+		t.Errorf("expected PATCH, got %s", capturedMethod)
+	}
+	if !strings.Contains(capturedQuery, "id=eq.entry-42") {
+		t.Errorf("query missing id filter, got: %s", capturedQuery)
+	}
+	if capturedBody["media_url"] != "https://example.com/image.jpg" {
+		t.Errorf("expected media_url in body, got: %v", capturedBody)
 	}
 }
 

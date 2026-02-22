@@ -299,6 +299,88 @@ func (r *CalendarRepository) RetryFailed() (int, error) {
 	return len(updated), nil
 }
 
+// GetEntriesNeedingMedia returns approved/scheduled entries that have generate_media=true
+// and no media_url set yet, joined with their script data for prompt building.
+func (r *CalendarRepository) GetEntriesNeedingMedia() ([]models.ContentCalendarWithScript, error) {
+	url := fmt.Sprintf(
+		"%s/rest/v1/content_calendar?status=in.(approved,scheduled)&generate_media=eq.true&media_url=is.null&select=*,content_scripts(*)",
+		r.config.URL,
+	)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get entries needing media: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get entries needing media: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	var entries []models.ContentCalendarWithScript
+	if err := json.Unmarshal(body, &entries); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	return entries, nil
+}
+
+// UpdateMediaURL sets the media_url for a calendar entry.
+func (r *CalendarRepository) UpdateMediaURL(entryID, mediaURL string) error {
+	url := fmt.Sprintf("%s/rest/v1/content_calendar?id=eq.%s", r.config.URL, entryID)
+
+	data := map[string]string{"media_url": mediaURL}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal data: %w", err)
+	}
+
+	req, err := http.NewRequest("PATCH", url, strings.NewReader(string(jsonData)))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	apiKey := r.config.ServiceKey
+	if apiKey == "" {
+		apiKey = r.config.AnonKey
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("apikey", apiKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	resp, err := r.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to update media URL: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("failed to update media URL: HTTP %d: %s", resp.StatusCode, string(body))
+	}
+
+	return nil
+}
+
 // DeleteEntry deletes a calendar entry
 func (r *CalendarRepository) DeleteEntry(id string) error {
 	url := fmt.Sprintf("%s/rest/v1/content_calendar?id=eq.%s", r.config.URL, id)

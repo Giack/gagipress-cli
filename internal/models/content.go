@@ -95,6 +95,15 @@ type ContentCalendar struct {
 	Status        string     `json:"status"`    // pending_approval, approved, published, failed
 	PublishedAt   *time.Time `json:"published_at,omitempty"`
 	PublishErrors any        `json:"publish_errors,omitempty"` // JSONB field
+	GenerateMedia bool       `json:"generate_media"`
+	MediaURL      *string    `json:"media_url,omitempty"`
+}
+
+// ContentCalendarWithScript is a calendar entry joined with its script data.
+// Used by GetEntriesNeedingMedia to build Imagen prompts.
+type ContentCalendarWithScript struct {
+	ContentCalendar
+	Script *ContentScript `json:"content_scripts,omitempty"`
 }
 
 // ContentCalendarInput represents input for creating a calendar entry

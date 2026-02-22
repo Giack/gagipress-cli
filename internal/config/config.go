@@ -16,6 +16,7 @@ type Config struct {
 	TikTok    TikTokConfig    `mapstructure:"tiktok"`
 	Amazon    AmazonConfig    `mapstructure:"amazon"`
 	Blotato   BlotatoConfig   `mapstructure:"blotato"`
+	Gemini    GeminiConfig    `mapstructure:"gemini"`
 }
 
 // SupabaseConfig holds Supabase connection details
@@ -55,6 +56,11 @@ type BlotatoConfig struct {
 	TemplateID string `mapstructure:"template_id" yaml:"template_id"`
 }
 
+// GeminiConfig holds Google Gemini/Imagen API configuration
+type GeminiConfig struct {
+	APIKey string `mapstructure:"api_key" yaml:"api_key"`
+}
+
 // Load loads configuration from file
 func Load() (*Config, error) {
 	var cfg Config
@@ -84,6 +90,7 @@ func Save(cfg *Config) error {
 	viper.Set("tiktok", cfg.TikTok)
 	viper.Set("amazon", cfg.Amazon)
 	viper.Set("blotato", cfg.Blotato)
+	viper.Set("gemini", cfg.Gemini)
 
 	if err := viper.WriteConfigAs(configFile); err != nil {
 		return fmt.Errorf("unable to write config file: %w", err)

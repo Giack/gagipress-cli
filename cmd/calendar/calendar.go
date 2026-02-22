@@ -21,4 +21,5 @@ func init() {
 	CalendarCmd.AddCommand(approveCmd)
 	CalendarCmd.AddCommand(statusCmd)
 	CalendarCmd.AddCommand(retryCmd)
+	CalendarCmd.AddCommand(generateMediaCmd)
 }
