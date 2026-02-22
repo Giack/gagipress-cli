@@ -48,9 +48,6 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 	if apiKey == "" {
 		apiKey = os.Getenv("GEMINI_API_KEY")
 	}
-	if apiKey == "" {
-		return fmt.Errorf("Gemini API key not configured. Set gemini.api_key in config or GEMINI_API_KEY env var")
-	}
 
 	supabaseServiceKey := cfg.Supabase.ServiceKey
 	if supabaseServiceKey == "" {
@@ -97,6 +94,10 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	if apiKey == "" {
+		return fmt.Errorf("Gemini API key not configured. Set gemini.api_key in config or GEMINI_API_KEY env var")
+	}
+
 	if err := os.Setenv("GOOGLE_API_KEY", apiKey); err != nil {
 		return fmt.Errorf("failed to set GOOGLE_API_KEY: %w", err)
 	}
@@ -118,7 +119,7 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 
 		response, err := genaiClient.Models.GenerateImages(
 			ctx,
-			"imagen-3.0-generate-002",
+			"imagen-4.0-generate-001",
 			prompt,
 			&genai.GenerateImagesConfig{
 				NumberOfImages: 1,
