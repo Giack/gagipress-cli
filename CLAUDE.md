@@ -154,9 +154,11 @@ supabase/              # Supabase CLI configuration
    - Creates weekly schedule with optimal posting times
    - Saves to `content_calendar` table with status `scheduled`
 
-6. **Publishing** (Not yet implemented)
-   - Will use Supabase Edge Functions (cron jobs)
-   - OAuth setup required for Instagram + TikTok
+6. **Publishing** (`cmd/publish/publish.go`)
+   - Uses Blotato as proxy for Instagram + TikTok
+   - Manual: `gagipress publish <calendar-entry-id> [--with-media]`
+   - Automated: pg_cron every 15min via `supabase/functions/publish-scheduled/index.ts`
+   - Activate cron: `supabase secrets set BLOTATO_API_KEY=<key>`
 
 ### Database Schema (Supabase)
 
@@ -169,7 +171,7 @@ supabase/              # Supabase CLI configuration
 
 **Status Fields:**
 - Content ideas: `pending` → `approved`/`rejected` → `scripted` → `scheduled`
-- Calendar: `scheduled` → `published`
+- Calendar: `scheduled` → `approved` → `publishing` → `published`/`failed`
 - Metrics: `collected` after automated collection
 
 **Migration Tool:**
@@ -310,6 +312,19 @@ Prompt templates are in `internal/prompts/templates.go`:
 - OpenAI is faster but Gemini is free
 - Add platform-specific instructions (character limits, hashtags)
 - Consider target_audience and genre from book metadata
+
+## AI Session Workflow
+
+**Always use claude-mem for planning and execution:**
+
+- **Before starting any multi-step task**: run `/claude-mem:make-plan` to load past context,
+  discover relevant docs, and produce a written plan
+- **To execute a plan**: run `/claude-mem:do` to orchestrate subagents that implement each
+  phase with verification checkpoints
+- **Memory search**: use `/claude-mem:mem-search` when unsure if something was already solved
+
+This ensures decisions, bugs fixed, and architectural choices from past sessions are not
+repeated or contradicted.
 
 ## Common Tasks
 
