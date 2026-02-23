@@ -181,10 +181,12 @@ func runGenerateMedia(cmd *cobra.Command, args []string) error {
 			}
 			genResp, err := genaiClient.Models.GenerateContent(
 				ctx,
-				"gemini-2.5-flash-preview-image-generation",
+				"gemini-2.5-flash-image",
 				contents,
 				&genai.GenerateContentConfig{
-					ResponseModalities: []string{"IMAGE", "TEXT"},
+					ImageConfig: &genai.ImageConfig{
+						AspectRatio: "9:16",
+					},
 				},
 			)
 			if err == nil {
@@ -327,9 +329,12 @@ func buildImagePrompt(platform string, script *models.ContentScriptWithIdea, boo
 
 	if book != nil && (book.CoverImageURL != "" || book.KDPASIN != "") {
 		return fmt.Sprintf(
-			"Create a vertical 9:16 promotional image INSPIRED BY the attached book cover for %s — %s post.%s "+
-				"Match the visual style, color palette, and mood of the cover. "+
-				"Style: engaging, colorful, warm. No text overlay. Bright background, playful composition.",
+			"Create a vertical 9:16 TikTok promotional image. "+
+				"The attached book cover MUST appear prominently and recognizably as the central "+
+				"focal point of the image — it must be clearly visible and occupy at least 40%%%% of "+
+				"the image area. Book: %s. Platform: %s.%s "+
+				"Surround the cover with vibrant, energetic visual elements. "+
+				"Style: bold, eye-catching, social-media-optimized. The cover must remain sharp and legible.",
 			bookDesc, platformDesc, hook,
 		)
 	}
