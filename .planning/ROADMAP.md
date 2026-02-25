@@ -46,7 +46,11 @@ Plans:
   3. A spinner appears immediately when any view begins loading, and disappears when data arrives
   4. Empty columns and empty tables display a clear empty-state message rather than blank space
   5. Dark color palette is applied globally — background, text, and card colors are consistent
-**Plans**: TBD
+**Plans**: 2
+
+Plans:
+- [ ] 02-01-PLAN.md — Data layer utilities: api.js (fetch wrapper) + components.js (shared UI renderers)
+- [ ] 02-02-PLAN.md — Nav wiring: data-nav attributes in index.html + updateNav() in router.js + visual verification
 
 ### Phase 3: Books View
 **Goal**: Users can see all books in the catalog with live Supabase data and click ASINs to open Amazon pages
@@ -88,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-25 |
-| 2. Data Layer + Shared Components | 0/TBD | Not started | - |
+| 2. Data Layer + Shared Components | 0/2 | Not started | - |
 | 3. Books View | 0/TBD | Not started | - |
 | 4. Ideas Kanban | 0/TBD | Not started | - |
 | 5. Calendar Kanban | 0/TBD | Not started | - |

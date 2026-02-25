@@ -38,10 +38,10 @@
 
 ### Global UX
 
-- [ ] **UX-01**: Spinner di loading durante il fetch da Supabase
-- [ ] **UX-02**: Messaggio di errore visibile se il fetch fallisce
-- [ ] **UX-03**: Empty state se una colonna o tabella è vuota
-- [ ] **UX-04**: Design minimal dark (CSS custom properties o Tailwind dark palette)
+- [x] **UX-01**: Spinner di loading durante il fetch da Supabase
+- [x] **UX-02**: Messaggio di errore visibile se il fetch fallisce
+- [x] **UX-03**: Empty state se una colonna o tabella è vuota
+- [x] **UX-04**: Design minimal dark (CSS custom properties o Tailwind dark palette)
 
 ## v2 Requirements
 
@@ -87,10 +87,10 @@
 | NAV-01 | Phase 2 | Pending |
 | NAV-02 | Phase 2 | Pending |
 | NAV-03 | Phase 2 | Pending |
-| UX-01 | Phase 2 | Pending |
-| UX-02 | Phase 2 | Pending |
-| UX-03 | Phase 2 | Pending |
-| UX-04 | Phase 2 | Pending |
+| UX-01 | Phase 2 | Complete |
+| UX-02 | Phase 2 | Complete |
+| UX-03 | Phase 2 | Complete |
+| UX-04 | Phase 2 | Complete |
 | BOOKS-01 | Phase 3 | Pending |
 | BOOKS-02 | Phase 3 | Pending |
 | IDEAS-01 | Phase 4 | Pending |
