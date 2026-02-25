@@ -30,7 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `dashboard/config.js` exists locally with valid Supabase URL and anon key, is listed in `.gitignore`, and `config.example.js` is committed as a setup template
   4. Navigating to `#/books`, `#/ideas`, `#/calendar` renders the correct stub view without a page reload
   5. Tailwind CSS loads from CDN and utility classes render correctly on static elements
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Security baseline: .gitignore entry, config.example.js, RLS migration 009
+- [ ] 01-02-PLAN.md — Dashboard scaffold: vercel.json, index.html, hash router, stub views
 
 ### Phase 2: Data Layer + Shared Components
 **Goal**: Reusable fetch wrapper and pure component renderers are verified against mock data before any live view is built
@@ -83,7 +87,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Not started | - |
 | 2. Data Layer + Shared Components | 0/TBD | Not started | - |
 | 3. Books View | 0/TBD | Not started | - |
 | 4. Ideas Kanban | 0/TBD | Not started | - |
