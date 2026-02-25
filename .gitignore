@@ -45,3 +45,6 @@ Thumbs.db
 supabase/.temp/
 supabase/.branches/
 supabase/seed.sql
+
+# Dashboard credentials (contains Supabase anon key)
+dashboard/config.js
