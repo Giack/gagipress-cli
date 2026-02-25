@@ -21,8 +21,8 @@
 
 ### Books View
 
-- [ ] **BOOKS-01**: Tabella libri con colonne: titolo, ASIN, genere, target audience
-- [ ] **BOOKS-02**: Click su ASIN apre la pagina prodotto Amazon in una nuova tab
+- [x] **BOOKS-01**: Tabella libri con colonne: titolo, ASIN, genere, target audience
+- [x] **BOOKS-02**: Click su ASIN apre la pagina prodotto Amazon in una nuova tab
 
 ### Ideas Kanban
 
@@ -91,8 +91,8 @@
 | UX-02 | Phase 2 | Complete |
 | UX-03 | Phase 2 | Complete |
 | UX-04 | Phase 2 | Complete |
-| BOOKS-01 | Phase 3 | Pending |
-| BOOKS-02 | Phase 3 | Pending |
+| BOOKS-01 | Phase 3 | Complete |
+| BOOKS-02 | Phase 3 | Complete |
 | IDEAS-01 | Phase 4 | Pending |
 | IDEAS-02 | Phase 4 | Pending |
 | IDEAS-03 | Phase 4 | Pending |

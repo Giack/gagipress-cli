@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Secure project scaffold: RLS policies, config setup, index.html shell with hash router (completed 2026-02-25)
 - [ ] **Phase 2: Data Layer + Shared Components** - Fetch wrapper, kanban and table renderers, loading/error/empty states
-- [ ] **Phase 3: Books View** - Live books table wired to Supabase, full fetch-to-render pipeline validated
+- [x] **Phase 3: Books View** - Live books table wired to Supabase, full fetch-to-render pipeline validated (completed 2026-02-25)
 - [ ] **Phase 4: Ideas Kanban** - Four-column kanban with live ideas data, column counts, script preview
 - [ ] **Phase 5: Calendar Kanban** - Five-column calendar kanban with platform coloring and dark design polish
 
@@ -60,7 +60,10 @@ Plans:
   1. The Books tab shows a table with columns: title, ASIN, genre, target audience — populated from live Supabase data
   2. Clicking an ASIN opens the Amazon product page in a new browser tab
   3. If the books table is empty, the empty-state message is displayed instead of a blank table
-**Plans**: TBD
+**Plans**: 1
+
+Plans:
+- [ ] 03-01-PLAN.md — Books view: replace stub with full async fetch-to-render pipeline
 
 ### Phase 4: Ideas Kanban
 **Goal**: Users can see all content ideas organized by status in a four-column kanban, with script preview on demand
@@ -93,6 +96,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-25 |
 | 2. Data Layer + Shared Components | 0/2 | Not started | - |
-| 3. Books View | 0/TBD | Not started | - |
+| 3. Books View | 1/1 | Complete   | 2026-02-25 |
 | 4. Ideas Kanban | 0/TBD | Not started | - |
 | 5. Calendar Kanban | 0/TBD | Not started | - |
