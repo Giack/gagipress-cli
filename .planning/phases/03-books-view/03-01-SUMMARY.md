@@ -18,8 +18,11 @@ decisions:
   - "renderBooks() exported as async function; skeleton rendered synchronously as first line before any await to prevent blank #app during fetch"
   - "ASIN links use book.kdp_asin (not book.asin) per Supabase column name in migrations/001_initial_schema.sql"
   - "4 skeleton rows chosen to match typical catalog size without excessive vertical space"
+requirements-completed:
+  - BOOKS-01
+  - BOOKS-02
 metrics:
-  duration: ~5min
+  duration: ~15min
   completed_date: "2026-02-25"
 ---
 
@@ -44,7 +47,10 @@ None — plan executed exactly as written.
 
 ## Checkpoint Status
 
-Task 2 (human-verify) is pending user browser verification.
+Task 2 (human-verify) APPROVED — user confirmed all 3 Phase 3 success criteria in browser:
+1. Books tab shows live table with Title, ASIN, Genre, Target Audience columns
+2. Clicking ASIN opens https://www.amazon.com/dp/{ASIN} in a new browser tab
+3. Empty state message appears when books table has no rows
 
 ## Self-Check
 

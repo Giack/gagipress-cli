@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-25T21:31:14.565Z"
+last_updated: "2026-02-25T21:56:37.194Z"
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 3
+  completed_phases: 3
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-data-layer-shared-components P01 | 4 | 2 tasks | 2 files |
 | Phase 02-data-layer-shared-components P02 | 1 | 2 tasks | 2 files |
 | Phase 02-data-layer-shared-components P02 | 10 | 3 tasks | 2 files |
+| Phase 03-books-view P01 | 15 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Re-created authenticated full access policies explicitly after DROP for clarity and best practice
 - [Phase 02-data-layer-shared-components]: updateNav() is module-private, only dispatch() exported; border-b-2/border-indigo-500 as string literals for Tailwind JIT; updateNav called before view()
 - [Phase 02-data-layer-shared-components]: updateNav() is module-private, only dispatch() exported; border-b-2/border-indigo-500 as string literals for Tailwind JIT; updateNav called before view()
+- [Phase 03-books-view]: renderBooks() skeleton rendered synchronously as first line — router.js dispatch() does not await view functions
+- [Phase 03-books-view]: ASIN links use book.kdp_asin (not book.asin) per actual Supabase column name
 
 ### Pending Todos
 
