@@ -68,7 +68,7 @@ Each task was committed atomically:
 
 1. **Task 1: Add data-nav attributes to index.html nav links** - `c4910a6` (feat)
 2. **Task 2: Add updateNav() to router.js and call it in dispatch()** - `5b0590e` (feat)
-3. **Task 3: Visual verification** - checkpoint:human-verify (pending user confirmation)
+3. **Task 3: Visual verification** - checkpoint:human-verify (approved by user — all 5 checklist items confirmed)
 
 ## Files Created/Modified
 - `dashboard/index.html` - Added `data-nav="#/books"`, `data-nav="#/ideas"`, `data-nav="#/calendar"` to nav links
@@ -92,8 +92,9 @@ None.
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Nav highlight logic complete; ready for Phase 3 data layer wiring
-- Visual verification (Task 3) pending user confirmation in browser
+- Nav highlight fully operational and visually confirmed — all 3 tabs highlight correctly on click and on initial load
+- Ready for Phase 3 Books view: `renderBooks()` can import `api.js` + `components.js` without any nav changes needed
+- The `[data-nav]` pattern is established — future phases must not use `nav a` selectors for nav targeting
 
 ---
 *Phase: 02-data-layer-shared-components*
