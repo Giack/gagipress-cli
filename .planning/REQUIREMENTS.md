@@ -15,9 +15,9 @@
 
 ### Navigation
 
-- [ ] **NAV-01**: Navbar con 3 sezioni: Books / Ideas / Calendar
-- [ ] **NAV-02**: Navigazione via hash routing (`#/books`, `#/ideas`, `#/calendar`)
-- [ ] **NAV-03**: Voce attiva evidenziata nella navbar
+- [x] **NAV-01**: Navbar con 3 sezioni: Books / Ideas / Calendar
+- [x] **NAV-02**: Navigazione via hash routing (`#/books`, `#/ideas`, `#/calendar`)
+- [x] **NAV-03**: Voce attiva evidenziata nella navbar
 
 ### Books View
 
@@ -84,9 +84,9 @@
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Complete |
-| NAV-01 | Phase 2 | Pending |
-| NAV-02 | Phase 2 | Pending |
-| NAV-03 | Phase 2 | Pending |
+| NAV-01 | Phase 2 | Complete |
+| NAV-02 | Phase 2 | Complete |
+| NAV-03 | Phase 2 | Complete |
 | UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 2 | Complete |
 | UX-03 | Phase 2 | Complete |
