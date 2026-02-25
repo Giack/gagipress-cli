@@ -7,11 +7,11 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Dashboard deployata come sito statico su Vercel dalla cartella `dashboard/` del repo
-- [ ] **INFRA-02**: Connessione a Supabase via supabase-js v2 (CDN ESM), configurata in `dashboard/config.js`
-- [ ] **INFRA-03**: `dashboard/config.js` aggiunto a `.gitignore` (contiene anon key, repo privato)
-- [ ] **INFRA-04**: RLS abilitata su tutte le 5 tabelle con policy SELECT-only per ruolo `anon`
-- [ ] **INFRA-05**: Tailwind CSS v4 CDN caricato come script tag in `index.html`
+- [x] **INFRA-01**: Dashboard deployata come sito statico su Vercel dalla cartella `dashboard/` del repo
+- [x] **INFRA-02**: Connessione a Supabase via supabase-js v2 (CDN ESM), configurata in `dashboard/config.js`
+- [x] **INFRA-03**: `dashboard/config.js` aggiunto a `.gitignore` (contiene anon key, repo privato)
+- [x] **INFRA-04**: RLS abilitata su tutte le 5 tabelle con policy SELECT-only per ruolo `anon`
+- [x] **INFRA-05**: Tailwind CSS v4 CDN caricato come script tag in `index.html`
 
 ### Navigation
 
@@ -79,11 +79,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
-| INFRA-05 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
+| INFRA-04 | Phase 1 | Complete |
+| INFRA-05 | Phase 1 | Complete |
 | NAV-01 | Phase 2 | Pending |
 | NAV-02 | Phase 2 | Pending |
 | NAV-03 | Phase 2 | Pending |

@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-02-25T21:04:38.313Z"
+progress:
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
+---
+
 # Project State
 
 ## Project Reference
@@ -34,6 +47,8 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01-foundation P02 | 2 | 2 tasks | 7 files |
+| Phase 01-foundation P01 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -46,6 +61,9 @@ Recent decisions affecting current work:
 - [Pre-phase]: Hardcode anon key in gitignored `config.js` (private repo, read-only key, RLS enabled)
 - [Pre-phase]: Raw `fetch` against PostgREST instead of supabase-js SDK (simpler, lighter)
 - [Pre-phase]: Hash routing (`#/books`, `#/ideas`, `#/calendar`) — no server-side routing needed
+- [Phase 01-foundation]: All JS imports use .js extensions for native browser ES module resolution without bundler
+- [Phase 01-foundation]: Included content_scripts in migration 009 for complete RLS coverage even though Phase 1 dashboard does not query it
+- [Phase 01-foundation]: Re-created authenticated full access policies explicitly after DROP for clarity and best practice
 
 ### Pending Todos
 

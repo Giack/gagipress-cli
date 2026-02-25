@@ -12,7 +12,7 @@ Five phases deliver a working read-only pipeline dashboard: secure infrastructur
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Secure project scaffold: RLS policies, config setup, index.html shell with hash router
+- [x] **Phase 1: Foundation** - Secure project scaffold: RLS policies, config setup, index.html shell with hash router (completed 2026-02-25)
 - [ ] **Phase 2: Data Layer + Shared Components** - Fetch wrapper, kanban and table renderers, loading/error/empty states
 - [ ] **Phase 3: Books View** - Live books table wired to Supabase, full fetch-to-render pipeline validated
 - [ ] **Phase 4: Ideas Kanban** - Four-column kanban with live ideas data, column counts, script preview
@@ -87,7 +87,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | Complete   | 2026-02-25 |
 | 2. Data Layer + Shared Components | 0/TBD | Not started | - |
 | 3. Books View | 0/TBD | Not started | - |
 | 4. Ideas Kanban | 0/TBD | Not started | - |
