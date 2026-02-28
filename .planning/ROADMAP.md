@@ -74,7 +74,10 @@ Plans:
   2. Each card displays the idea title and platform (TikTok or Instagram)
   3. Clicking a card that has a generated script expands a preview of the script text inline
   4. Columns with no ideas show the empty-state message rather than blank space
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — Calendar kanban: replace stub with five-column live view, platform color accents, multi-table join for idea titles
 
 ### Phase 5: Calendar Kanban
 **Goal**: Users can see the full publishing pipeline in a five-column kanban with platform color coding and a polished dark design
@@ -85,7 +88,10 @@ Plans:
   2. Each card displays the scheduled date, platform, and the title of the linked idea
   3. Cards are visually distinguishable by platform (different color accent for TikTok vs Instagram)
   4. The overall dashboard design is consistently minimal dark — all three views feel cohesive
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — Calendar kanban: replace stub with five-column live view, platform color accents, multi-table join for idea titles
 
 ## Progress
 
