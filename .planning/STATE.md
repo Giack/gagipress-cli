@@ -1,9 +1,9 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-status: unknown
-last_updated: "2026-02-28T17:34:56.756Z"
+milestone_name: Dashboard MVP
+status: milestone_complete
+last_updated: "2026-02-28T17:39:09.463Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -15,10 +15,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-25)
+See: .planning/PROJECT.md (updated 2026-02-28)
 
 **Core value:** Vedere a colpo d'occhio dove si trova ogni idea nel pipeline content — da `pending` a `published` — senza aprire il terminale.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Planning next milestone (v2)
 
 ## Current Position
 
