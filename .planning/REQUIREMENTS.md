@@ -32,9 +32,9 @@
 
 ### Calendar Kanban
 
-- [ ] **CAL-01**: Kanban con 5 colonne: scheduled / approved / publishing / published / failed
-- [ ] **CAL-02**: Card mostra data programmata e piattaforma
-- [ ] **CAL-03**: Card mostra titolo dell'idea collegata
+- [x] **CAL-01**: Kanban con 5 colonne: scheduled / approved / publishing / published / failed
+- [x] **CAL-02**: Card mostra data programmata e piattaforma
+- [x] **CAL-03**: Card mostra titolo dell'idea collegata
 
 ### Global UX
 
@@ -96,9 +96,9 @@
 | IDEAS-01 | Phase 4 | Complete |
 | IDEAS-02 | Phase 4 | Complete |
 | IDEAS-03 | Phase 4 | Complete |
-| CAL-01 | Phase 5 | Pending |
-| CAL-02 | Phase 5 | Pending |
-| CAL-03 | Phase 5 | Pending |
+| CAL-01 | Phase 5 | Complete |
+| CAL-02 | Phase 5 | Complete |
+| CAL-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total

@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 4 of 5 (Ideas Kanban)
+Phase: 5 of 5 (Calendar Kanban)
 Plan: 1 of 1 in current phase
-Status: Phase 4 complete — ready for Phase 5
-Last activity: 2026-02-28 — Ideas kanban view implemented and verified (04-01)
+Status: Phase 5 complete — all dashboard views implemented
+Last activity: 2026-02-28 — Calendar kanban view implemented and verified (05-01)
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [████████░░] 80%
 | Phase 02-data-layer-shared-components P02 | 10 | 3 tasks | 2 files |
 | Phase 03-books-view P01 | 15 | 2 tasks | 1 files |
 | Phase 04-ideas-kanban P01 | 30 | 2 tasks | 1 files |
+| Phase 05-calendar-kanban P01 | ~20 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 03-books-view]: ASIN links use book.kdp_asin (not book.asin) per actual Supabase column name
 - [Phase 04-ideas-kanban]: Script preview slot present on all cards; handler shows "Script not found." for non-scripted ideas — simplifies renderCard()
 - [Phase 04-ideas-kanban]: content_scripts fetched once via Promise.all at page load; client-side Map used for O(1) lookup, no per-click network requests
+- [Phase 05-calendar-kanban]: COLUMNS array uses dbStatus: 'pending_approval' for UI 'scheduled' column — 'scheduled' does not exist in DB
+- [Phase 05-calendar-kanban]: Platform badge uses literal Tailwind class strings (text-pink-400/text-purple-400) in PLATFORM_BADGE_CLASSES map for JIT compatibility
 
 ### Pending Todos
 
@@ -88,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 04-01-PLAN.md — Ideas kanban view verified
+Stopped at: Completed 05-01-PLAN.md — Calendar kanban verified
 Resume file: None

@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Data Layer + Shared Components** - Fetch wrapper, kanban and table renderers, loading/error/empty states
 - [x] **Phase 3: Books View** - Live books table wired to Supabase, full fetch-to-render pipeline validated (completed 2026-02-25)
 - [x] **Phase 4: Ideas Kanban** - Four-column kanban with live ideas data, column counts, script preview (completed 2026-02-28)
-- [ ] **Phase 5: Calendar Kanban** - Five-column calendar kanban with platform coloring and dark design polish
+- [x] **Phase 5: Calendar Kanban** - Five-column calendar kanban with platform coloring and dark design polish (completed 2026-02-28)
 
 ## Phase Details
 
@@ -104,4 +104,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Data Layer + Shared Components | 0/2 | Not started | - |
 | 3. Books View | 1/1 | Complete   | 2026-02-25 |
 | 4. Ideas Kanban | 0/TBD | Complete    | 2026-02-28 |
-| 5. Calendar Kanban | 0/TBD | Not started | - |
+| 5. Calendar Kanban | 1/1 | Complete   | 2026-02-28 |
