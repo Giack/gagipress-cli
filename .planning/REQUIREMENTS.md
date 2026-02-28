@@ -26,9 +26,9 @@
 
 ### Ideas Kanban
 
-- [ ] **IDEAS-01**: Kanban con 4 colonne: pending / approved / rejected / scripted
-- [ ] **IDEAS-02**: Card mostra titolo idea e piattaforma (TikTok / Instagram)
-- [ ] **IDEAS-03**: Click su card espande preview dello script generato (se presente)
+- [x] **IDEAS-01**: Kanban con 4 colonne: pending / approved / rejected / scripted
+- [x] **IDEAS-02**: Card mostra titolo idea e piattaforma (TikTok / Instagram)
+- [x] **IDEAS-03**: Click su card espande preview dello script generato (se presente)
 
 ### Calendar Kanban
 
@@ -93,9 +93,9 @@
 | UX-04 | Phase 2 | Complete |
 | BOOKS-01 | Phase 3 | Complete |
 | BOOKS-02 | Phase 3 | Complete |
-| IDEAS-01 | Phase 4 | Pending |
-| IDEAS-02 | Phase 4 | Pending |
-| IDEAS-03 | Phase 4 | Pending |
+| IDEAS-01 | Phase 4 | Complete |
+| IDEAS-02 | Phase 4 | Complete |
+| IDEAS-03 | Phase 4 | Complete |
 | CAL-01 | Phase 5 | Pending |
 | CAL-02 | Phase 5 | Pending |
 | CAL-03 | Phase 5 | Pending |
